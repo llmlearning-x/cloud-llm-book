@@ -39,10 +39,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-218f5815.js";
+            window.path_to_searchindex_js = "searchindex-c6431ff1.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-2fb085c6.js"></script>
+        <script src="toc-7a73496a.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -4752,6 +4752,192 @@ Major.Minor.Patch
 <hr>
 <p><strong>下一章预告</strong>：第 4 章将深入探讨 RAG 应用架构与实战，包括知识库构建、向量检索、文档切分、检索优化等核心技术，并提供完整的企业级 RAG 系统实现案例。</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="31-restful-api-设计规范-1"><a class="header" href="#31-restful-api-设计规范-1">3.1 RESTful API 设计规范</a></h1>
+<h2 id="场景引入-5"><a class="header" href="#场景引入-5">场景引入</a></h2>
+<p>某电商平台计划将大模型能力集成到其商品搜索和客服系统中。技术团队面临的首要挑战是：如何设计一套规范、稳定且易于维护的 API 接口，既能满足前端多样化的调用需求，又能有效应对高并发下的性能压力？</p>
+<p>本章将从阿里云百炼平台的 API 设计出发，深入探讨大模型场景下的 RESTful 规范适配。</p>
+<hr>
+<h2 id="311-大模型-api-的特殊性-1"><a class="header" href="#311-大模型-api-的特殊性-1">3.1.1 大模型 API 的特殊性</a></h2>
+<p>传统的 RESTful API 设计遵循“资源导向“原则，但大模型 API 具有显著差异：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>特性</th><th>传统 API</th><th>大模型 API</th><th>影响</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>会话状态</strong></td><td>无状态</td><td>有状态（多轮对话）</td><td>需维护上下文历史</td></tr>
+<tr><td><strong>响应确定性</strong></td><td>确定</td><td>概率性生成</td><td>相同输入可能产生不同输出</td></tr>
+<tr><td><strong>延迟特征</strong></td><td>毫秒级</td><td>秒级（流式首字快）</td><td>需支持 SSE/WebSocket</td></tr>
+<tr><td><strong>计费维度</strong></td><td>调用次数</td><td>Token 用量</td><td>需精确统计输入/输出量</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="312-端点endpoint设计-1"><a class="header" href="#312-端点endpoint设计-1">3.1.2 端点（Endpoint）设计</a></h2>
+<p>阿里云百炼平台采用以下端点设计规范：</p>
+<pre><code># 基础 URL
+https://dashscope.aliyuncs.com/api/v1
+
+# 文本生成
+POST /services/aigc/text-generation/generation
+
+# 多模态生成
+POST /services/aigc/multimodal-generation/generation
+
+# Embeddings 向量化
+POST /services/embeddings/text-embedding/text-embedding
+</code></pre>
+<p><strong>设计要点：</strong></p>
+<ol>
+<li><strong>版本化路径</strong>：<code>/api/v1/</code> 明确标识 API 版本。</li>
+<li><strong>服务分类</strong>：按能力类型分组（如 <code>/aigc/</code>, <code>/embeddings/</code>）。</li>
+<li><strong>动词语义</strong>：使用具体动作（<code>generation</code>, <code>synthesis</code>）而非泛化的 <code>generate</code>。</li>
+</ol>
+<h2 id="313-请求体与响应体结构"><a class="header" href="#313-请求体与响应体结构">3.1.3 请求体与响应体结构</a></h2>
+<p>标准的文本生成请求体应包含模型选择、消息历史和推理参数：</p>
+<pre><code class="language-json">{
+  "model": "qwen3.6-plus",
+  "input": {
+    "messages": [
+      {"role": "system", "content": "你是一个专业的编程助手。"},
+      {"role": "user", "content": "请用 Python 写一个快速排序算法。"}
+    ]
+  },
+  "parameters": {
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens": 1024,
+    "stream": false
+  }
+}
+</code></pre>
+<p>响应体中，<code>usage</code> 字段对于成本核算至关重要：</p>
+<pre><code class="language-json">{
+  "output": {
+    "text": "def quicksort(arr):...",
+    "finish_reason": "stop"
+  },
+  "usage": {
+    "input_tokens": 45,
+    "output_tokens": 89,
+    "total_tokens": 134
+  }
+}
+</code></pre>
+<h2 id="314-错误处理规范"><a class="header" href="#314-错误处理规范">3.1.4 错误处理规范</a></h2>
+<p>统一的错误响应格式有助于客户端快速定位问题：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>错误码</th><th>HTTP 状态码</th><th>说明</th><th>解决方案</th></tr>
+</thead>
+<tbody>
+<tr><td><code>InvalidParameter</code></td><td>400</td><td>参数格式错误</td><td>检查参数类型和取值范围</td></tr>
+<tr><td><code>QuotaExhausted</code></td><td>403</td><td>配额已用尽</td><td>购买更多额度或等待重置</td></tr>
+<tr><td><code>RateLimitExceeded</code></td><td>429</td><td>请求频率超限</td><td>降低调用频率或申请提升配额</td></tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p><strong>最佳实践</strong>：在客户端实现自动重试机制时，应针对 <code>429</code> 和 <code>5xx</code> 错误进行指数退避重试，而对于 <code>400</code> 类错误则应立即停止并重报给开发者。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="32-认证鉴权与多语言-sdk"><a class="header" href="#32-认证鉴权与多语言-sdk">3.2 认证鉴权与多语言 SDK</a></h1>
+<h2 id="321-api-key-管理与安全"><a class="header" href="#321-api-key-管理与安全">3.2.1 API Key 管理与安全</a></h2>
+<p>阿里云百炼平台采用 API Key 作为主要的认证方式。技术决策者必须建立严格的密钥管理规范：</p>
+<p><strong>安全最佳实践：</strong></p>
+<ul>
+<li><strong>环境变量存储</strong>：严禁在代码中硬编码 API Key，应通过 <code>os.getenv("DASHSCOPE_API_KEY")</code> 获取。</li>
+<li><strong>RAM 用户隔离</strong>：为每个应用或环境（开发/测试/生产）创建独立的 RAM 用户并授予最小权限。</li>
+<li><strong>定期轮换</strong>：建议每季度更换一次 API Key，并启用使用监控告警。</li>
+</ul>
+<h2 id="322-python-sdk-实战"><a class="header" href="#322-python-sdk-实战">3.2.2 Python SDK 实战</a></h2>
+<p>Python 是大模型应用开发的首选语言。DashScope SDK 提供了简洁的调用接口：</p>
+<pre><code class="language-python">import os
+from http import HTTPStatus
+import dashscope
+from dashscope import Generation
+
+dashscope.api_key = os.getenv("DASHSCOPE_API_KEY")
+
+response = Generation.call(
+    model='qwen3.6-plus',
+    messages=[{'role': 'user', 'content': '你好'}],
+    temperature=0.7,
+    max_tokens=1024
+)
+
+if response.status_code == HTTPStatus.OK:
+    print(f"回复：{response.output.choices[0].message.content}")
+else:
+    print(f"请求失败：{response.code} - {response.message}")
+</code></pre>
+<h2 id="323-java-与-nodejs-sdk"><a class="header" href="#323-java-与-nodejs-sdk">3.2.3 Java 与 Node.js SDK</a></h2>
+<p>对于企业级后端系统，Java 和 Node.js 也是常用的集成语言：</p>
+<p><strong>Java (Maven):</strong></p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+    &lt;artifactId&gt;dashscope-sdk-java&lt;/artifactId&gt;
+    &lt;version&gt;2.15.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p><strong>Node.js:</strong></p>
+<pre><code class="language-javascript">const DashScope = require('@alicloud/dashscope');
+const client = new DashScope({ accessKeyId: process.env.DASHSCOPE_API_KEY });
+
+async function chat() {
+  const response = await client.invoke('qwen3.6-plus', {
+    messages: [{ role: 'user', content: '你好' }]
+  });
+  console.log(response.output.choices[0].message.content);
+}
+</code></pre>
+<blockquote>
+<p><strong>技术决策点</strong>：在多语言团队中，建议封装统一的内部网关服务（Gateway），由网关统一处理认证、限流和日志记录，各业务线只需通过内网调用网关即可，从而降低 SDK 维护成本。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="33-限流熔断与版本管理"><a class="header" href="#33-限流熔断与版本管理">3.3 限流熔断与版本管理</a></h1>
+<h2 id="331-客户端限流策略"><a class="header" href="#331-客户端限流策略">3.3.1 客户端限流策略</a></h2>
+<p>百炼平台对不同用户等级有明确的 QPS 限制。为了防止因突发流量导致服务不可用，建议在客户端实现令牌桶算法：</p>
+<pre><code class="language-python">import time
+from threading import Lock
+
+class RateLimiter:
+    def __init__(self, rate, capacity):
+        self.rate = rate
+        self.capacity = capacity
+        self.tokens = capacity
+        self.last_update = time.time()
+        self.lock = Lock()
+    
+    def acquire(self):
+        with self.lock:
+            now = time.time()
+            elapsed = now - self.last_update
+            self.tokens = min(self.capacity, self.tokens + elapsed * self.rate)
+            self.last_update = now
+            
+            if self.tokens &gt;= 1:
+                self.tokens -= 1
+                return True
+            return False
+</code></pre>
+<h2 id="332-熔断与重试机制"><a class="header" href="#332-熔断与重试机制">3.3.2 熔断与重试机制</a></h2>
+<p>当 API 出现连续失败时，应触发熔断以保护系统资源：</p>
+<ul>
+<li><strong>熔断器状态</strong>：关闭（正常）、打开（快速失败）、半开（尝试恢复）。</li>
+<li><strong>指数退避重试</strong>：针对网络抖动或临时性错误，采用 <code>base_delay * (2 ^ attempt)</code> 的策略进行重试。</li>
+</ul>
+<h2 id="333-api-版本管理"><a class="header" href="#333-api-版本管理">3.3.3 API 版本管理</a></h2>
+<p>大模型能力迭代迅速，API 演进不可避免。建议采用语义化版本号（Semantic Versioning）：</p>
+<ul>
+<li><strong>并行运行期</strong>：新旧版本同时可用至少 3 个月。</li>
+<li><strong>废弃通知</strong>：在 HTTP Response Header 中添加 <code>Deprecation</code> 字段。</li>
+<li><strong>迁移指南</strong>：提供详细的参数映射表和自动化迁移脚本。</li>
+</ul>
+<blockquote>
+<p><strong>本章小结</strong>：规范的 API 设计、安全的认证机制以及完善的弹性防护，是构建企业级大模型应用的基石。技术决策者应从第一天起就建立这些工程化规范。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="第-4-章-rag-应用架构与实战"><a class="header" href="#第-4-章-rag-应用架构与实战">第 4 章 RAG 应用架构与实战</a></h1>
 <blockquote>
 <p><strong>本章导读</strong></p>
@@ -5226,6 +5412,120 @@ if __name__ == '__main__':
 </ol>
 <hr>
 <p><strong>下一章预告</strong>：第 5 章将探讨 Agent 应用架构与实战，包括 Agent 的核心组件、规划能力、工具调用、记忆机制，以及基于阿里云百炼的 Agent 开发框架。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="41-rag-核心原理与知识库构建"><a class="header" href="#41-rag-核心原理与知识库构建">4.1 RAG 核心原理与知识库构建</a></h1>
+<h2 id="场景引入-6"><a class="header" href="#场景引入-6">场景引入</a></h2>
+<p>某大型制造企业拥有数万份设备维护手册、故障案例和维修记录。技术人员在排查故障时，往往需要花费数小时翻阅文档。通过构建基于 RAG（检索增强生成）的企业知识库，可以将查询时间缩短至秒级，并显著提升回答的准确性。</p>
+<h2 id="411-rag-工作流程"><a class="header" href="#411-rag-工作流程">4.1.1 RAG 工作流程</a></h2>
+<p>RAG 系统由“离线构建”和“在线检索”两个核心阶段组成：</p>
+<ol>
+<li><strong>文档处理</strong>：解析 PDF/Word → 文本清洗 → 语义分块（Chunking）。</li>
+<li><strong>向量化</strong>：使用 Embedding 模型将文本块转换为高维向量。</li>
+<li><strong>存储</strong>：存入向量数据库（如阿里云 DashVector）。</li>
+<li><strong>检索增强</strong>：用户提问 → 问题向量化 → 相似度检索 → 拼接 Prompt → 大模型生成。</li>
+</ol>
+<h2 id="412-文档切分策略"><a class="header" href="#412-文档切分策略">4.1.2 文档切分策略</a></h2>
+<p>合理的切分是提升检索精度的关键。常见的策略包括：</p>
+<ul>
+<li><strong>固定长度切分</strong>：简单但容易切断语义。</li>
+<li><strong>递归字符切分</strong>：按段落、句子、单词的顺序尝试切分，保持语义完整性。</li>
+<li><strong>结构化切分</strong>：利用 Markdown 标题或 PDF 目录结构进行逻辑分割。</li>
+</ul>
+<pre><code class="language-python">from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+splitter = RecursiveCharacterTextSplitter(
+    separators=["\n\n", "\n", "。", "！"],
+    chunk_size=300,
+    chunk_overlap=50
+)
+chunks = splitter.split_documents(cleaned_docs)
+</code></pre>
+<h2 id="413-阿里云百炼知识库实战"><a class="header" href="#413-阿里云百炼知识库实战">4.1.3 阿里云百炼知识库实战</a></h2>
+<p>阿里云百炼平台提供了一站式的知识库管理功能：</p>
+<ul>
+<li><strong>多格式支持</strong>：自动解析 Word、PDF、Excel 等常见办公文档。</li>
+<li><strong>智能分片</strong>：内置针对中文优化的分片算法。</li>
+<li><strong>混合检索</strong>：同时支持关键词匹配和向量语义检索，大幅提升召回率。</li>
+</ul>
+<blockquote>
+<p><strong>技术决策点</strong>：对于非结构化数据占比高的企业，建议优先采用百炼平台的托管知识库服务，以减少底层向量库的运维投入。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="42-向量检索优化与重排序"><a class="header" href="#42-向量检索优化与重排序">4.2 向量检索优化与重排序</a></h1>
+<h2 id="421-混合检索hybrid-search"><a class="header" href="#421-混合检索hybrid-search">4.2.1 混合检索（Hybrid Search）</a></h2>
+<p>单一的向量检索在处理专有名词或精确匹配时往往表现不佳。混合检索结合了关键词检索（BM25）和向量检索的优势：</p>
+<ul>
+<li><strong>关键词检索</strong>：擅长处理型号、编号等精确匹配。</li>
+<li><strong>向量检索</strong>：擅长理解语义相似性和同义词扩展。</li>
+</ul>
+<p>通过 RRF（倒数排名融合）算法，可以将两路召回的结果进行科学融合。</p>
+<h2 id="422-重排序re-ranking"><a class="header" href="#422-重排序re-ranking">4.2.2 重排序（Re-ranking）</a></h2>
+<p>初筛出的 Top-K 文档可能包含噪声。使用 Cross-Encoder 模型对候选集进行精细打分，可以显著提升最终答案的质量：</p>
+<pre><code class="language-python">from dashscope import TextRank
+
+def rerank(query, documents, top_k=3):
+    response = TextRank.call(
+        model='gte-rerank',
+        query=query,
+        docs=[doc for doc in documents]
+    )
+    ranked_indices = [item['index'] for item in response.output['results']]
+    return [documents[i] for i in ranked_indices[:top_k]]
+</code></pre>
+<h2 id="423-阿里云-dashvector-性能调优"><a class="header" href="#423-阿里云-dashvector-性能调优">4.2.3 阿里云 DashVector 性能调优</a></h2>
+<p>在阿里云 DashVector 中，可以通过以下参数优化检索性能：</p>
+<ul>
+<li><strong>索引类型</strong>：选择 HNSW 索引以平衡查询速度和内存占用。</li>
+<li><strong>相似度度量</strong>：根据 Embedding 模型特性选择余弦相似度（Cosine）或内积（IP）。</li>
+<li><strong>过滤条件</strong>：利用元数据过滤（如部门、文档类型）缩小检索范围，提升精度。</li>
+</ul>
+<blockquote>
+<p><strong>最佳实践</strong>：在资源允许的情况下，建议开启“向量检索 + 关键词检索 + 重排序”的三级漏斗模式，这是目前企业级 RAG 系统的黄金标准。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="43-企业级-rag-系统实现案例"><a class="header" href="#43-企业级-rag-系统实现案例">4.3 企业级 RAG 系统实现案例</a></h1>
+<h2 id="431-系统架构设计"><a class="header" href="#431-系统架构设计">4.3.1 系统架构设计</a></h2>
+<p>一个健壮的企业级 RAG 系统应包含以下核心组件：</p>
+<ul>
+<li><strong>数据接入层</strong>：支持定时同步数据库、文件服务器和钉钉文档。</li>
+<li><strong>处理流水线</strong>：异步任务队列（如 Celery）处理耗时的文档解析和向量化。</li>
+<li><strong>检索服务</strong>：提供统一的搜索接口，支持多路召回和重排序。</li>
+<li><strong>应用网关</strong>：处理用户鉴权、流式输出和日志审计。</li>
+</ul>
+<h2 id="432-核心代码实现"><a class="header" href="#432-核心代码实现">4.3.2 核心代码实现</a></h2>
+<p>基于 Flask 和阿里云百炼的完整实现示例：</p>
+<pre><code class="language-python">@app.route('/api/rag/query', methods=['POST'])
+def rag_query():
+    question = request.json.get('question')
+    
+    # 1. 混合检索
+    contexts = hybrid_search(question, top_k=10)
+    
+    # 2. 重排序
+    final_contexts = rerank(question, contexts, top_k=5)
+    
+    # 3. 构建增强 Prompt
+    prompt = build_rag_prompt(question, final_contexts)
+    
+    # 4. 调用 Qwen3.6-Plus 生成答案
+    response = Generation.call(
+        model='qwen3.6-plus',
+        messages=[{'role': 'user', 'content': prompt}],
+        stream=True
+    )
+    
+    return Response(generate_stream(response), mimetype='text/event-stream')
+</code></pre>
+<h2 id="433-效果评估与持续优化"><a class="header" href="#433-效果评估与持续优化">4.3.3 效果评估与持续优化</a></h2>
+<p>上线后需重点关注以下指标：</p>
+<ul>
+<li><strong>命中率</strong>：用户点赞/点踩的比例。</li>
+<li><strong>引用准确率</strong>：生成的答案是否能准确追溯到原始文档片段。</li>
+<li><strong>响应延迟</strong>：从提问到首字输出的时间（TTFT）。</li>
+</ul>
+<blockquote>
+<p><strong>本章小结</strong>：RAG 技术的落地不仅仅是算法问题，更是工程问题。通过合理的切分、混合检索和重排序策略，可以显著提升大模型在企业私有知识场景下的表现。</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="第-5-章-agent-应用架构与实战"><a class="header" href="#第-5-章-agent-应用架构与实战">第 5 章 Agent 应用架构与实战</a></h1>
 <blockquote>
@@ -5954,6 +6254,95 @@ triggers:
 </ol>
 <hr>
 <p><strong>下一章预告</strong>：第 6 章将探讨大模型应用的安全与合规问题，包括内容安全、数据隐私、模型滥用防护、企业合规要求等关键议题。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="51-agent-核心概念与规划算法"><a class="header" href="#51-agent-核心概念与规划算法">5.1 Agent 核心概念与规划算法</a></h1>
+<h2 id="场景引入-7"><a class="header" href="#场景引入-7">场景引入</a></h2>
+<p>某电商企业希望实现一个“智能运营助理”，能够根据指令自动完成“查询上周销量、生成图表并发送邮件”的复杂任务。这不再是一个简单的问答系统，而是一个具备自主规划和工具调用能力的 AI Agent（智能体）。</p>
+<h2 id="511-agent-的四层架构"><a class="header" href="#511-agent-的四层架构">5.1.1 Agent 的四层架构</a></h2>
+<ul>
+<li><strong>感知层</strong>：接收文本、图像等多模态输入。</li>
+<li><strong>记忆层</strong>：维护短期对话历史和长期用户偏好。</li>
+<li><strong>规划层</strong>：将复杂目标拆解为可执行的子任务序列。</li>
+<li><strong>行动层</strong>：通过 Function Calling 调用外部 API 或执行代码。</li>
+</ul>
+<h2 id="512-react-算法实战"><a class="header" href="#512-react-算法实战">5.1.2 ReAct 算法实战</a></h2>
+<p>ReAct（Reasoning + Acting）是目前最主流的 Agent 算法，其核心是“思考-行动-观察”的循环：</p>
+<pre><code>Thought: 我需要先获取上周的销售数据。
+Action: query_sales_api(start_date="2026-04-09", end_date="2026-04-15")
+Observation: {"total_sales": 50000, "growth": "+15%"}
+Thought: 接下来需要将这些数据绘制成柱状图。
+Action: generate_chart(data=..., type="bar")
+...
+</code></pre>
+<h2 id="513-任务分解策略"><a class="header" href="#513-任务分解策略">5.1.3 任务分解策略</a></h2>
+<p>对于超长链路任务，建议采用 <strong>Plan-and-Solve</strong> 模式：先让大模型生成一份详细的执行计划，确认无误后再逐步执行。这能有效减少 Agent 在复杂逻辑中的“迷路”现象。</p>
+<blockquote>
+<p><strong>技术决策点</strong>：在阿里云百炼平台上，可以通过配置“智能体应用”快速实现 ReAct 流程，无需从零编写底层调度逻辑。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="52-工具调用与记忆系统设计"><a class="header" href="#52-工具调用与记忆系统设计">5.2 工具调用与记忆系统设计</a></h1>
+<h2 id="521-function-calling-机制"><a class="header" href="#521-function-calling-机制">5.2.1 Function Calling 机制</a></h2>
+<p>Qwen3.6-Plus 原生支持 Function Calling，能够精准地将自然语言指令转化为结构化的 API 调用参数。</p>
+<p><strong>定义工具 Schema：</strong></p>
+<pre><code class="language-json">{
+  "name": "get_weather",
+  "description": "查询指定城市的天气",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "city": {"type": "string"},
+      "date": {"type": "string"}
+    },
+    "required": ["city"]
+  }
+}
+</code></pre>
+<p><strong>执行流程：</strong></p>
+<ol>
+<li><strong>模型识别</strong>：大模型根据用户意图决定是否需要调用工具。</li>
+<li><strong>参数提取</strong>：模型生成符合 Schema 定义的 JSON 参数。</li>
+<li><strong>本地执行</strong>：系统在本地执行对应的 Python 函数并获取结果。</li>
+<li><strong>结果回填</strong>：将执行结果作为 <code>role: tool</code> 的消息返回给模型，由其生成最终回复。</li>
+</ol>
+<h2 id="522-记忆系统架构"><a class="header" href="#522-记忆系统架构">5.2.2 记忆系统架构</a></h2>
+<p>Agent 的记忆能力决定了其交互的连贯性和个性化程度：</p>
+<ul>
+<li><strong>短期记忆（Working Memory）</strong>：通过滑动窗口管理当前对话的上下文，确保多轮对话的逻辑不中断。</li>
+<li><strong>长期记忆（Long-term Memory）</strong>：利用向量数据库存储用户的偏好、历史操作记录等关键信息。例如，当用户说“帮我订一张去北京的票”时，Agent 能通过长期记忆自动补全“出发地：南京”和“舱位：商务座”。</li>
+</ul>
+<h2 id="523-阿里云百炼-agent-开发"><a class="header" href="#523-阿里云百炼-agent-开发">5.2.3 阿里云百炼 Agent 开发</a></h2>
+<p>在百炼平台中，开发者可以通过可视化界面为 Agent 绑定多种插件（如钉钉消息发送、高德地图查询、企业内部 CRM 系统等）。平台会自动处理复杂的鉴权和参数传递逻辑，让开发者专注于业务逻辑的实现。</p>
+<blockquote>
+<p><strong>最佳实践</strong>：在设计工具时，务必提供清晰、无歧义的 <code>description</code> 和 <code>parameter</code> 说明，这是提升 Agent 调用成功率的关键。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="53-多-agent-协作与百炼平台实战"><a class="header" href="#53-多-agent-协作与百炼平台实战">5.3 多 Agent 协作与百炼平台实战</a></h1>
+<h2 id="531-多-agent-协作模式"><a class="header" href="#531-多-agent-协作模式">5.3.1 多 Agent 协作模式</a></h2>
+<p>面对极其复杂的业务场景，单个 Agent 往往难以胜任。通过构建“多 Agent 协作网络”，可以实现专业分工：</p>
+<ul>
+<li><strong>Manager Agent（管理者）</strong>：负责任务拆解、进度跟踪和结果汇总。</li>
+<li><strong>Specialist Agents（专家）</strong>：如“代码专家”、“数据分析专家”、“文案创作专家”，各自专注于特定领域。</li>
+<li><strong>Critic Agent（审核者）</strong>：负责对其他 Agent 的产出进行质量校验和纠错。</li>
+</ul>
+<h2 id="532-阿里云百炼工作流编排"><a class="header" href="#532-阿里云百炼工作流编排">5.3.2 阿里云百炼工作流编排</a></h2>
+<p>阿里云百炼平台提供了强大的**工作流（Workflow）**功能，支持以低代码的方式编排多个大模型节点和工具节点：</p>
+<ol>
+<li><strong>可视化画布</strong>：通过拖拽组件定义数据流向。</li>
+<li><strong>条件分支</strong>：根据中间结果动态调整执行路径。</li>
+<li><strong>变量管理</strong>：在不同节点间传递复杂的数据结构。</li>
+</ol>
+<h2 id="533-实战案例智能研报生成"><a class="header" href="#533-实战案例智能研报生成">5.3.3 实战案例：智能研报生成</a></h2>
+<p>一个典型的金融研报生成工作流如下：</p>
+<ol>
+<li><strong>搜索 Agent</strong>：调用搜索引擎获取最新的市场新闻。</li>
+<li><strong>分析 Agent</strong>：对新闻进行情感分析和关键信息提取。</li>
+<li><strong>写作 Agent</strong>：结合分析结果和公司财报，撰写研报初稿。</li>
+<li><strong>合规 Agent</strong>：检查内容是否符合金融监管要求。</li>
+<li><strong>输出</strong>：生成最终的 PDF 报告并推送到钉钉群。</li>
+</ol>
+<blockquote>
+<p><strong>本章小结</strong>：Agent 技术正在从“单点突破”走向“系统协同”。通过百炼平台的工具链，企业可以快速构建出具备高度自主性和协作能力的智能应用，从而重塑业务流程。</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="第-6-章-大模型应用安全与合规"><a class="header" href="#第-6-章-大模型应用安全与合规">第 6 章 大模型应用安全与合规</a></h1>
 <blockquote>
