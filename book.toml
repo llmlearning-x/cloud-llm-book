@@ -6,11 +6,9 @@ title = "云上大模型应用开发实践"
 description = "面向技术决策者的阿里云大模型应用开发指南，涵盖 Agent 与 RAG 实战"
 
 [output.html]
-git-host = "github"
-git-repository-url = "https://github.com/xiaoyun/cloud-llm-book"
-edit-url-template = "https://github.com/xiaoyun/cloud-llm-book/edit/main/{path}"
+git-repository-url = "https://github.com/llmlearning-x/cloud-llm-book"
+edit-url-template = "https://github.com/llmlearning-x/cloud-llm-book/edit/main/{path}"
 site-url = "/cloud-llm-book/"
-cname = "xiaoyun.tech"
 smart-punctuation = true
 mathjax-support = true
 additional-css = ["assets/css/custom.css"]
