@@ -1,0 +1,25 @@
+[book]
+authors = ["晓云"]
+language = "zh"
+src = "src"
+title = "云上大模型应用开发实践"
+description = "面向技术决策者的阿里云大模型应用开发指南，涵盖 Agent 与 RAG 实战"
+
+[output.html]
+git-host = "github"
+git-repository-url = "https://github.com/xiaoyun/cloud-llm-book"
+edit-url-template = "https://github.com/xiaoyun/cloud-llm-book/edit/main/{path}"
+site-url = "/cloud-llm-book/"
+cname = "xiaoyun.tech"
+smart-punctuation = true
+mathjax-support = true
+additional-css = ["assets/css/custom.css"]
+additional-js = []
+no-section-label = false
+
+[output.html.fold]
+enable = true
+level = 1
+
+[output.pdf]
+optional = true

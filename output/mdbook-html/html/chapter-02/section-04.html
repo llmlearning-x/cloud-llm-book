@@ -1,0 +1,874 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>2.4 网络与安全架构 - 云上大模型应用开发实践</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="面向技术决策者的阿里云大模型应用开发指南，涵盖 Agent 与 RAG 实战">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-218f5815.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-46fe4919.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">云上大模型应用开发实践</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="24-网络与安全架构"><a class="header" href="#24-网络与安全架构">2.4 网络与安全架构</a></h1>
+<h2 id="场景引入"><a class="header" href="#场景引入">场景引入</a></h2>
+<p>某金融机构计划在阿里云上部署智能投顾系统，需要处理客户的敏感财务数据。合规部门提出以下要求：</p>
+<ol>
+<li>所有数据传输必须加密</li>
+<li>大模型 API 调用不能经过公网</li>
+<li>API Key 等敏感凭证必须安全存储</li>
+<li>所有操作必须有审计日志</li>
+<li>符合金融行业的数据隔离要求</li>
+</ol>
+<p>技术团队面临的核心问题是：如何设计安全的网络架构？如何保护敏感数据？如何满足合规要求？</p>
+<p>本节将系统地解答这些问题。</p>
+<hr>
+<h2 id="241-vpc-私有网络规划"><a class="header" href="#241-vpc-私有网络规划">2.4.1 VPC 私有网络规划</a></h2>
+<h3 id="为什么需要-vpc"><a class="header" href="#为什么需要-vpc">为什么需要 VPC</a></h3>
+<p>VPC（Virtual Private Cloud）是阿里云提供的隔离的虚拟网络环境。对于大模型应用，使用 VPC 的主要价值在于：</p>
+<ul>
+<li><strong>网络隔离</strong>：不同业务系统的资源相互隔离，避免干扰</li>
+<li><strong>安全控制</strong>：通过安全组和网络 ACL 精细控制访问权限</li>
+<li><strong>私网通信</strong>：阿里云服务之间通过内网通信，延迟更低、更安全</li>
+<li><strong>混合云连接</strong>：通过 VPN 或专线连接本地数据中心</li>
+</ul>
+<h3 id="vpc-架构设计"><a class="header" href="#vpc-架构设计">VPC 架构设计</a></h3>
+<p>典型的三层网络架构：</p>
+<pre><code>┌──────────────────────────────────────────────────────┐
+│                    VPC: 10.0.0.0/16                  │
+├──────────────────────────────────────────────────────┤
+│  公有子网 (Public Subnet): 10.0.1.0/24               │
+│  ┌──────────────┐  ┌──────────────┐                 │
+│  │  NAT Gateway  │  │  Bastion Host │                │
+│  └──────────────┘  └──────────────┘                 │
+├──────────────────────────────────────────────────────┤
+│  应用子网 (Application Subnet): 10.0.2.0/24          │
+│  ┌──────────────┐  ┌──────────────┐                 │
+│  │  Web Server   │  │  App Server   │                │
+│  └──────────────┘  └──────────────┘                 │
+├──────────────────────────────────────────────────────┤
+│  数据子网 (Data Subnet): 10.0.3.0/24                 │
+│  ┌──────────────┐  ┌──────────────┐                 │
+│  │  RDS/PolarDB  │  │  Redis Cache  │                │
+│  └──────────────┘  └──────────────┘                 │
+└──────────────────────────────────────────────────────┘
+</code></pre>
+<p><strong>设计原则：</strong></p>
+<ol>
+<li><strong>最小权限</strong>：每个子网只开放必要的端口和协议</li>
+<li><strong>分层隔离</strong>：Web 层、应用层、数据层分别部署在不同子网</li>
+<li><strong>单向访问</strong>：数据层只能被应用层访问，不能被 Web 层直接访问</li>
+<li><strong>堡垒机接入</strong>：运维人员通过堡垒机访问内部资源</li>
+</ol>
+<h3 id="快速入门"><a class="header" href="#快速入门">快速入门</a></h3>
+<p><strong>步骤一：创建 VPC 和交换机</strong></p>
+<pre><code class="language-python">from alibabacloud_vpc20160428.client import Client
+from alibabacloud_vpc20160428.models import CreateVpcRequest, CreateVSwitchRequest
+
+client = Client(
+    access_key_id=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+    access_key_secret=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_SECRET')
+)
+
+# 创建 VPC
+vpc_request = CreateVpcRequest(
+    region_id='cn-beijing',
+    cidr_block='10.0.0.0/16',
+    vpc_name='llm-app-vpc',
+    description='大模型应用 VPC'
+)
+vpc_response = client.create_vpc(vpc_request)
+vpc_id = vpc_response.body.vpc_id
+print(f"VPC 创建成功: {vpc_id}")
+
+# 创建交换机（子网）
+zones = ['cn-beijing-a', 'cn-beijing-b', 'cn-beijing-c']
+subnet_cidrs = ['10.0.1.0/24', '10.0.2.0/24', '10.0.3.0/24']
+subnet_names = ['public-subnet', 'app-subnet', 'data-subnet']
+
+vswitch_ids = []
+for zone, cidr, name in zip(zones, subnet_cidrs, subnet_names):
+    vswitch_request = CreateVSwitchRequest(
+        region_id='cn-beijing',
+        vpc_id=vpc_id,
+        cidr_block=cidr,
+        zone_id=zone,
+        v_switch_name=name
+    )
+    vswitch_response = client.create_vswitch(vswitch_request)
+    vswitch_ids.append(vswitch_response.body.v_switch_id)
+    print(f"交换机创建成功: {name} - {vswitch_response.body.v_switch_id}")
+</code></pre>
+<p><strong>步骤二：配置安全组</strong></p>
+<pre><code class="language-python">from alibabacloud_ecs20140526.client import Client as EcsClient
+from alibabacloud_ecs20140526.models import CreateSecurityGroupRequest, AuthorizeSecurityGroupRequest
+
+ecs_client = EcsClient(
+    access_key_id=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+    access_key_secret=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_SECRET')
+)
+
+# 创建安全组
+sg_request = CreateSecurityGroupRequest(
+    region_id='cn-beijing',
+    vpc_id=vpc_id,
+    security_group_name='llm-app-sg',
+    description='大模型应用安全组'
+)
+sg_response = ecs_client.create_security_group(sg_request)
+sg_id = sg_response.body.security_group_id
+print(f"安全组创建成功: {sg_id}")
+
+# 添加入方向规则
+rules = [
+    # Web 层：允许 HTTP/HTTPS
+    {'port': '80/80', 'source_cidr': '0.0.0.0/0', 'description': 'HTTP'},
+    {'port': '443/443', 'source_cidr': '0.0.0.0/0', 'description': 'HTTPS'},
+    
+    # 应用层：允许来自 Web 层的访问
+    {'port': '8000/8000', 'source_cidr': '10.0.1.0/24', 'description': 'App API'},
+    
+    # 数据层：允许来自应用层的访问
+    {'port': '3306/3306', 'source_cidr': '10.0.2.0/24', 'description': 'MySQL'},
+    {'port': '6379/6379', 'source_cidr': '10.0.2.0/24', 'description': 'Redis'},
+]
+
+for rule in rules:
+    auth_request = AuthorizeSecurityGroupRequest(
+        region_id='cn-beijing',
+        security_group_id=sg_id,
+        ip_protocol='tcp',
+        port_range=rule['port'],
+        source_cidr_ip=rule['source_cidr'],
+        description=rule['description']
+    )
+    ecs_client.authorize_security_group(auth_request)
+    print(f"安全组规则添加: {rule['description']}")
+</code></pre>
+<h3 id="私网连接百炼平台"><a class="header" href="#私网连接百炼平台">私网连接百炼平台</a></h3>
+<p>默认情况下，百炼平台的 API 通过公网访问。对于有严格安全要求的场景，可以通过 VPC Endpoint 实现私网访问：</p>
+<pre><code class="language-python">from alibabacloud_privatelink20200415.client import Client
+from alibabacloud_privatelink20200415.models import CreateVpcEndpointRequest
+
+privatelink_client = Client(
+    access_key_id=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+    access_key_secret=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_SECRET')
+)
+
+# 创建 VPC Endpoint
+endpoint_request = CreateVpcEndpointRequest(
+    region_id='cn-beijing',
+    vpc_id=vpc_id,
+    service_name='com.aliyun.modelstudio',  # 百炼平台服务名称
+    endpoint_name='modelstudio-endpoint',
+    security_group_ids=[sg_id],
+    zone_mappings=[
+        {'zone_id': 'cn-beijing-a', 'v_switch_id': vswitch_ids[0]},
+        {'zone_id': 'cn-beijing-b', 'v_switch_id': vswitch_ids[1]},
+    ]
+)
+endpoint_response = privatelink_client.create_vpc_endpoint(endpoint_request)
+endpoint_id = endpoint_response.body.endpoint_id
+print(f"VPC Endpoint 创建成功: {endpoint_id}")
+
+# 获取 Endpoint 域名
+endpoint_dns = f"{endpoint_id}.cn-beijing.privatelink.aliyuncs.com"
+print(f"私网访问域名: {endpoint_dns}")
+</code></pre>
+<p><strong>使用私网域名调用 API：</strong></p>
+<pre><code class="language-python">import dashscope
+
+# 配置私网 Endpoint
+dashscope.base_websocket_api_url = f"wss://{endpoint_dns}/api/v1"
+dashscope.base_http_api_url = f"https://{endpoint_dns}/api/v1"
+
+# 正常调用 API（流量走私网）
+response = dashscope.Generation.call(
+    model='qwen3.6-plus',
+    prompt='你好',
+    api_key=os.getenv('DASHSCOPE_API_KEY')
+)
+print(response.output.text)
+</code></pre>
+<hr>
+<h2 id="242-api-gateway-与-waf-防护"><a class="header" href="#242-api-gateway-与-waf-防护">2.4.2 API Gateway 与 WAF 防护</a></h2>
+<h3 id="api-gateway-的作用"><a class="header" href="#api-gateway-的作用">API Gateway 的作用</a></h3>
+<p>API Gateway 是大模型应用的前置网关，提供以下能力：</p>
+<ul>
+<li><strong>统一入口</strong>：所有 API 请求通过统一域名访问</li>
+<li><strong>认证鉴权</strong>：验证用户身份和权限</li>
+<li><strong>限流熔断</strong>：防止恶意攻击和过载</li>
+<li><strong>日志审计</strong>：记录所有 API 调用</li>
+<li><strong>版本管理</strong>：支持多版本 API 并存</li>
+</ul>
+<h3 id="快速入门-1"><a class="header" href="#快速入门-1">快速入门</a></h3>
+<p><strong>步骤一：创建 API 分组</strong></p>
+<pre><code class="language-python">from alibabacloud_apigateway20160714.client import Client
+from alibabacloud_apigateway20160714.models import CreateApiGroupRequest
+
+apigw_client = Client(
+    access_key_id=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+    access_key_secret=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_SECRET')
+)
+
+# 创建 API 分组
+group_request = CreateApiGroupRequest(
+    group_name='llm-api-group',
+    description='大模型 API 分组',
+    traffic_limit=10000,  # QPS 限制
+    billing_status='ENABLED'
+)
+group_response = apigw_client.create_api_group(group_request)
+group_id = group_response.body.group_id
+print(f"API 分组创建成功: {group_id}")
+</code></pre>
+<p><strong>步骤二：定义 API</strong></p>
+<pre><code class="language-python">from alibabacloud_apigateway20160714.models import CreateApiRequest
+
+# 创建对话 API
+api_request = CreateApiRequest(
+    group_id=group_id,
+    api_name='chat_completion',
+    visibility='PRIVATE',  # 私有 API
+    auth_type='APP',  # APP 认证
+    request_config={
+        'request_protocol': 'HTTPS',
+        'request_method': 'POST',
+        'request_path': '/v1/chat/completions',
+        'body_format': 'FORM'
+    },
+    service_config={
+        'service_protocol': 'HTTPS',
+        'service_address': 'dashscope.aliyuncs.com',
+        'service_path': '/api/v1/services/aigc/text-generation/generation',
+        'service_method': 'POST'
+    }
+)
+api_response = apigw_client.create_api(api_request)
+api_id = api_response.body.api_id
+print(f"API 创建成功: {api_id}")
+</code></pre>
+<p><strong>步骤三：配置限流策略</strong></p>
+<pre><code class="language-python">from alibabacloud_apigateway20160714.models import SetApiTrafficControlRequest
+
+# 设置 API 限流
+traffic_request = SetApiTrafficControlRequest(
+    group_id=group_id,
+    api_id=api_id,
+    traffic_control_id='default',
+    api_traffic_limit=100,  # 单 API QPS 限制
+    user_traffic_limit=10,  # 单用户 QPS 限制
+    app_traffic_limit=50  # 单应用 QPS 限制
+)
+apigw_client.set_api_traffic_control(traffic_request)
+print("限流策略配置成功")
+</code></pre>
+<h3 id="waf-防护"><a class="header" href="#waf-防护">WAF 防护</a></h3>
+<p>WAF（Web Application Firewall）用于防护常见的 Web 攻击，如 SQL 注入、XSS、CC 攻击等。</p>
+<p><strong>配置 WAF 防护：</strong></p>
+<pre><code class="language-python">from alibabacloud_waf_openapi20190910.client import Client as WafClient
+from alibabacloud_waf_openapi20190910.models import CreateDomainRequest
+
+waf_client = WafClient(
+    access_key_id=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+    access_key_secret=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_SECRET')
+)
+
+# 添加域名到 WAF
+domain_request = CreateDomainRequest(
+    domain='api.llm-app.example.com',
+    instance_id='waf-instance-xxx',
+    protocols=['HTTPS'],
+    https_ext_info={
+        'cert_id': 'cert-xxx',  # SSL 证书 ID
+        'force_redirect': True  # 强制 HTTPS
+    }
+)
+waf_client.create_domain(domain_request)
+print("域名已添加到 WAF")
+
+# 配置防护规则
+# 1. SQL 注入防护：启用
+# 2. XSS 防护：启用
+# 3. CC 防护：启用，阈值 100 次/分钟
+# 4. Bot 管理：启用，拦截恶意爬虫
+</code></pre>
+<p><strong>WAF 防护效果：</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>攻击类型</th><th>防护能力</th><th>误报率</th></tr>
+</thead>
+<tbody>
+<tr><td>SQL 注入</td><td>高</td><td>&lt;0.1%</td></tr>
+<tr><td>XSS</td><td>高</td><td>&lt;0.1%</td></tr>
+<tr><td>CC 攻击</td><td>中</td><td>1-2%</td></tr>
+<tr><td>Bot 攻击</td><td>中</td><td>2-5%</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>最佳实践：</strong></p>
+<ul>
+<li>开启日志记录，定期分析攻击趋势</li>
+<li>配置告警规则，及时发现异常流量</li>
+<li>定期更新防护规则，适应新型攻击</li>
+<li>对于误报，添加白名单而非关闭防护</li>
+</ul>
+<hr>
+<h2 id="243-密钥管理与访问控制"><a class="header" href="#243-密钥管理与访问控制">2.4.3 密钥管理与访问控制</a></h2>
+<h3 id="ram-访问控制"><a class="header" href="#ram-访问控制">RAM 访问控制</a></h3>
+<p>RAM（Resource Access Management）是阿里云的身份管理服务，用于控制用户对云资源的访问权限。</p>
+<p><strong>最小权限原则：</strong></p>
+<p>为不同的角色分配最小必要权限：</p>
+<pre><code class="language-json">{
+  "Version": "1",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dashscope:GenerateText",
+        "dashscope:GenerateEmbedding"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Deny",
+      "Action": [
+        "dashscope:CreateModel",
+        "dashscope:DeleteModel",
+        "dashscope:UpdateApiKey"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+</code></pre>
+<p><strong>创建 RAM 用户并授权：</strong></p>
+<pre><code class="language-python">from alibabacloud_ram20150501.client import Client as RamClient
+from alibabacloud_ram20150501.models import CreateUserRequest, AttachPolicyToUserRequest
+
+ram_client = RamClient(
+    access_key_id=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+    access_key_secret=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_SECRET')
+)
+
+# 创建 RAM 用户
+user_request = CreateUserRequest(
+    user_name='llm-app-service',
+    display_name='大模型应用服务账号',
+    comments='用于大模型 API 调用的服务账号'
+)
+ram_client.create_user(user_request)
+print("RAM 用户创建成功")
+
+# 附加策略
+policy_request = AttachPolicyToUserRequest(
+    user_name='llm-app-service',
+    policy_name='AliyunDashScopeReadOnlyAccess',  # 只读权限
+    policy_type='System'
+)
+ram_client.attach_policy_to_user(policy_request)
+print("策略附加成功")
+
+# 创建 AccessKey
+from alibabacloud_ram20150501.models import CreateAccessKeyRequest
+ak_request = CreateAccessKeyRequest(user_name='llm-app-service')
+ak_response = ram_client.create_access_key(ak_request)
+print(f"AccessKey ID: {ak_response.body.access_key.access_key_id}")
+print(f"AccessKey Secret: {ak_response.body.access_key.access_key_secret}")
+</code></pre>
+<h3 id="密钥管理服务-kms"><a class="header" href="#密钥管理服务-kms">密钥管理服务 KMS</a></h3>
+<p>KMS（Key Management Service）用于安全存储和管理敏感凭证，如 API Key、数据库密码等。</p>
+<p><strong>为什么需要 KMS：</strong></p>
+<ul>
+<li><strong>安全存储</strong>：密钥加密存储，即使数据库泄露也无法直接读取</li>
+<li><strong>访问审计</strong>：记录所有密钥访问操作</li>
+<li><strong>自动轮换</strong>：支持定期自动轮换密钥</li>
+<li><strong>细粒度权限</strong>：控制谁可以访问哪些密钥</li>
+</ul>
+<p><strong>快速入门：</strong></p>
+<pre><code class="language-python">from alibabacloud_kms20160120.client import Client as KmsClient
+from alibabacloud_kms20160120.models import CreateKeyRequest, PutSecretValueRequest, GetSecretValueRequest
+
+kms_client = KmsClient(
+    access_key_id=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+    access_key_secret=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_SECRET')
+)
+
+# 创建密钥
+key_request = CreateKeyRequest(
+    description='DashScope API Key',
+    key_spec='AES_256',
+    protection_level='SOFTWARE'
+)
+key_response = kms_client.create_key(key_request)
+key_id = key_response.body.key_metadata.key_id
+print(f"密钥创建成功: {key_id}")
+
+# 存储密钥值
+secret_request = PutSecretValueRequest(
+    secret_name='dashscope-api-key',
+    secret_data=os.getenv('DASHSCOPE_API_KEY'),
+    version_id='v1'
+)
+kms_client.put_secret_value(secret_request)
+print("密钥值存储成功")
+
+# 读取密钥值
+def get_api_key():
+    """从 KMS 获取 API Key"""
+    secret_response = kms_client.get_secret_value(
+        GetSecretValueRequest(secret_name='dashscope-api-key')
+    )
+    return secret_response.body.secret_data
+
+# 使用密钥
+api_key = get_api_key()
+response = dashscope.Generation.call(
+    model='qwen3.6-plus',
+    prompt='你好',
+    api_key=api_key
+)
+</code></pre>
+<p><strong>最佳实践：</strong></p>
+<ol>
+<li><strong>不要硬编码密钥</strong>：永远不要在代码中硬编码 API Key 或密码</li>
+<li><strong>使用环境变量或 KMS</strong>：通过环境变量或 KMS 动态获取密钥</li>
+<li><strong>定期轮换密钥</strong>：建议每 90 天轮换一次 API Key</li>
+<li><strong>最小权限</strong>：为每个服务分配独立的 RAM 用户和最小权限</li>
+<li><strong>启用 MFA</strong>：对管理员账号启用多因素认证</li>
+</ol>
+<hr>
+<h2 id="244-数据安全与加密"><a class="header" href="#244-数据安全与加密">2.4.4 数据安全与加密</a></h2>
+<h3 id="传输加密"><a class="header" href="#传输加密">传输加密</a></h3>
+<p>所有数据传输必须使用 TLS 1.2 或更高版本：</p>
+<pre><code class="language-python">import ssl
+import requests
+
+# 强制使用 TLS 1.2+
+session = requests.Session()
+session.verify = True  # 验证 SSL 证书
+
+# 禁用不安全的协议
+context = ssl.create_default_context()
+context.check_hostname = True
+context.verify_mode = ssl.CERT_REQUIRED
+context.minimum_version = ssl.TLSVersion.TLSv1_2
+
+response = session.get(
+    'https://dashscope.aliyuncs.com/api/v1',
+    verify=True
+)
+</code></pre>
+<h3 id="存储加密"><a class="header" href="#存储加密">存储加密</a></h3>
+<p><strong>OSS 服务端加密：</strong></p>
+<pre><code class="language-python">import oss2
+
+# 创建启用服务端加密的 Bucket
+bucket_config = oss2.models.ServerSideEncryptionRule()
+bucket_config.sse_algorithm = oss2.SERVER_SIDE_ENCRYPTION_AES256  # AES-256 加密
+bucket.put_bucket_encryption(bucket_config)
+print("OSS 服务端加密已启用")
+</code></pre>
+<p><strong>RDS 透明数据加密（TDE）：</strong></p>
+<pre><code class="language-sql">-- 启用 TDE
+ALTER INSTANCE ENABLE TDE;
+
+-- 为特定表空间启用加密
+CREATE TABLESPACE encrypted_ts
+ADD DATAFILE 'encrypted_ts.ibd'
+ENCRYPTION = 'Y';
+</code></pre>
+<h3 id="数据脱敏"><a class="header" href="#数据脱敏">数据脱敏</a></h3>
+<p>对于敏感数据（如用户手机号、身份证号），在存储和日志中进行脱敏：</p>
+<pre><code class="language-python">import re
+
+def mask_phone(phone: str) -&gt; str:
+    """手机号脱敏：138****1234"""
+    if len(phone) == 11:
+        return phone[:3] + '****' + phone[7:]
+    return phone
+
+def mask_id_card(id_card: str) -&gt; str:
+    """身份证脱敏：110101********1234"""
+    if len(id_card) == 18:
+        return id_card[:6] + '********' + id_card[14:]
+    return id_card
+
+def mask_email(email: str) -&gt; str:
+    """邮箱脱敏：us***@example.com"""
+    if '@' in email:
+        local, domain = email.split('@', 1)
+        if len(local) &gt; 2:
+            masked_local = local[:2] + '***'
+        else:
+            masked_local = '***'
+        return f"{masked_local}@{domain}"
+    return email
+
+# 使用示例
+print(mask_phone('13812345678'))  # 138****5678
+print(mask_id_card('110101199001011234'))  # 110101********1234
+print(mask_email('user@example.com'))  # us***@example.com
+</code></pre>
+<hr>
+<h2 id="245-审计与监控"><a class="header" href="#245-审计与监控">2.4.5 审计与监控</a></h2>
+<h3 id="操作审计-actiontrail"><a class="header" href="#操作审计-actiontrail">操作审计 ActionTrail</a></h3>
+<p>ActionTrail 记录所有阿里云 API 调用，用于安全审计和问题追溯。</p>
+<p><strong>查询审计日志：</strong></p>
+<pre><code class="language-python">from alibabacloud_actiontrail20200706.client import Client as ActionTrailClient
+from alibabacloud_actiontrail20200706.models import LookupEventsRequest
+
+actiontrail_client = ActionTrailClient(
+    access_key_id=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+    access_key_secret=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_SECRET')
+)
+
+# 查询过去 24 小时的 DashScope API 调用
+import datetime
+end_time = datetime.datetime.utcnow()
+start_time = end_time - datetime.timedelta(hours=24)
+
+lookup_request = LookupEventsRequest(
+    start_time=start_time.isoformat() + 'Z',
+    end_time=end_time.isoformat() + 'Z',
+    event_name=['GenerateText', 'GenerateEmbedding'],
+    max_results=100
+)
+response = actiontrail_client.lookup_events(lookup_request)
+
+for event in response.body.events:
+    print(f"[{event.event_time}] {event.user_identity.principal_id} - {event.event_name}")
+</code></pre>
+<h3 id="日志服务-sls"><a class="header" href="#日志服务-sls">日志服务 SLS</a></h3>
+<p>SLS（Simple Log Service）用于收集和分析应用日志。</p>
+<p><strong>配置日志采集：</strong></p>
+<pre><code class="language-python">from alibabacloud_sls20201230.client import Client as SlsClient
+from alibabacloud_sls20201230.models import PostLogStoreLogsRequest
+
+sls_client = SlsClient(
+    access_key_id=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+    access_key_secret=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_SECRET')
+)
+
+# 发送日志
+log_item = {
+    'time': int(time.time()),
+    'contents': [
+        ('level', 'INFO'),
+        ('message', 'API 调用成功'),
+        ('model', 'qwen3.6-plus'),
+        ('input_tokens', '100'),
+        ('output_tokens', '50'),
+        ('latency_ms', '250'),
+        ('user_id', 'user_12345')
+    ]
+}
+
+log_group = {
+    'logs': [log_item]
+}
+
+sls_client.post_log_store_logs(
+    project='llm-app-logs',
+    logstore='api-calls',
+    log_group=log_group
+)
+</code></pre>
+<p><strong>日志查询与分析：</strong></p>
+<pre><code class="language-sql">-- 查询过去 1 小时的 API 调用统计
+SELECT 
+    model,
+    COUNT(*) as call_count,
+    AVG(latency_ms) as avg_latency,
+    SUM(input_tokens + output_tokens) as total_tokens
+FROM api_calls
+WHERE __time__ &gt;= now() - 3600
+GROUP BY model
+ORDER BY call_count DESC
+
+-- 查询错误率高的用户
+SELECT 
+    user_id,
+    COUNT(*) as total_calls,
+    SUM(CASE WHEN status_code &gt;= 400 THEN 1 ELSE 0 END) as error_count,
+    ROUND(SUM(CASE WHEN status_code &gt;= 400 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) as error_rate
+FROM api_calls
+WHERE __time__ &gt;= now() - 86400
+GROUP BY user_id
+HAVING error_rate &gt; 5
+ORDER BY error_rate DESC
+</code></pre>
+<hr>
+<h2 id="本节小结"><a class="header" href="#本节小结">本节小结</a></h2>
+<p>本节系统介绍了大模型应用的网络与安全架构：</p>
+<ol>
+<li>
+<p><strong>VPC 私有网络</strong>：通过分层架构和安全组实现网络隔离和访问控制，通过 VPC Endpoint 实现百炼平台私网访问</p>
+</li>
+<li>
+<p><strong>API Gateway 与 WAF</strong>：提供统一入口、认证鉴权、限流熔断和 Web 攻击防护</p>
+</li>
+<li>
+<p><strong>密钥管理</strong>：通过 RAM 实现最小权限控制，通过 KMS 安全存储敏感凭证</p>
+</li>
+<li>
+<p><strong>数据加密</strong>：传输层使用 TLS 1.2+，存储层使用 OSS 服务端加密和 RDS TDE</p>
+</li>
+<li>
+<p><strong>审计与监控</strong>：通过 ActionTrail 记录操作审计，通过 SLS 收集和分析应用日志</p>
+</li>
+</ol>
+<p>技术决策者在设计安全架构时，应遵循“纵深防御“的原则，在网络层、应用层、数据层都建立防护措施，而不是依赖单一的安全机制。同时，安全措施不应影响用户体验，需要在安全性和可用性之间取得平衡。</p>
+<hr>
+<h2 id="延伸阅读"><a class="header" href="#延伸阅读">延伸阅读</a></h2>
+<ol>
+<li>
+<p><strong>官方文档</strong></p>
+<ul>
+<li><a href="https://help.aliyun.com/zh/vpc/">VPC 产品文档</a></li>
+<li><a href="https://help.aliyun.com/zh/api-gateway/">API Gateway 产品文档</a></li>
+<li><a href="https://help.aliyun.com/zh/ram/">RAM 产品文档</a></li>
+<li><a href="https://help.aliyun.com/zh/kms/">KMS 产品文档</a></li>
+<li><a href="https://help.aliyun.com/zh/actiontrail/">ActionTrail 产品文档</a></li>
+<li><a href="https://help.aliyun.com/zh/sls/">SLS 产品文档</a></li>
+</ul>
+</li>
+<li>
+<p><strong>安全最佳实践</strong></p>
+<ul>
+<li><a href="https://www.aliyun.com/security/whitepaper">阿里云安全白皮书</a></li>
+<li><a href="https://help.aliyun.com/zh/security/compliance">金融行业云上安全合规指南</a></li>
+</ul>
+</li>
+<li>
+<p><strong>架构案例</strong></p>
+<ul>
+<li>某银行智能客服系统安全架构设计</li>
+<li>某医疗机构数据隐私保护方案</li>
+<li>某电商平台 API 安全防护实践</li>
+</ul>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../chapter-02/section-03.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../chapter-02/section-05.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../chapter-02/section-03.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../chapter-02/section-05.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

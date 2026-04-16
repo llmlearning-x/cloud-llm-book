@@ -1,0 +1,657 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 7 章 大模型应用性能优化 - 云上大模型应用开发实践</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="面向技术决策者的阿里云大模型应用开发指南，涵盖 Agent 与 RAG 实战">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-218f5815.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-46fe4919.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">云上大模型应用开发实践</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-7-章-大模型应用性能优化"><a class="header" href="#第-7-章-大模型应用性能优化">第 7 章 大模型应用性能优化</a></h1>
+<blockquote>
+<p><strong>本章导读</strong></p>
+<p>性能是大模型应用用户体验的关键指标。本章将深入讲解推理加速、缓存策略、批处理优化、模型压缩等性能优化技术，帮助技术决策者构建低延迟、高吞吐的大模型应用系统。</p>
+<p><strong>核心议题：</strong></p>
+<ul>
+<li>推理延迟分析与优化</li>
+<li>多级缓存策略设计</li>
+<li>批处理（Batching）优化</li>
+<li>模型量化与蒸馏</li>
+<li>流式输出与增量渲染</li>
+<li>性能监控与调优</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="71-推理延迟分析"><a class="header" href="#71-推理延迟分析">7.1 推理延迟分析</a></h2>
+<h3 id="711-延迟构成"><a class="header" href="#711-延迟构成">7.1.1 延迟构成</a></h3>
+<p>大模型推理延迟主要由以下部分组成：</p>
+<pre><code>总延迟 = 网络传输 + 排队等待 + Prefill + Decoding
+
+- Prefill 阶段：处理输入 Prompt，并行计算所有 token
+- Decoding 阶段：自回归生成输出 token，串行计算
+</code></pre>
+<p><strong>典型延迟分布（Qwen3.6-Plus，1000 输入 +500 输出）：</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>阶段</th><th>耗时</th><th>占比</th></tr>
+</thead>
+<tbody>
+<tr><td>网络传输</td><td>20ms</td><td>5%</td></tr>
+<tr><td>排队等待</td><td>50ms</td><td>12%</td></tr>
+<tr><td>Prefill</td><td>100ms</td><td>24%</td></tr>
+<tr><td>Decoding</td><td>250ms</td><td>59%</td></tr>
+<tr><td><strong>总计</strong></td><td><strong>420ms</strong></td><td><strong>100%</strong></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="712-首-token-延迟优化"><a class="header" href="#712-首-token-延迟优化">7.1.2 首 Token 延迟优化</a></h3>
+<p>首 Token 延迟（Time to First Token, TTFT）直接影响用户感知：</p>
+<pre><code class="language-python"># 使用流式输出降低感知延迟
+def stream_response(question):
+    responses = Generation.call(
+        model='qwen3.6-plus',
+        messages=[{'role': 'user', 'content': question}],
+        stream=True
+    )
+    
+    first_token_time = None
+    for response in responses:
+        if first_token_time is None:
+            first_token_time = time.time()
+            print(f"首 Token 延迟：{first_token_time - start_time:.2f}s")
+        
+        delta = response.output.choices[0].message.content
+        print(delta, end='', flush=True)
+</code></pre>
+<p><strong>优化策略：</strong></p>
+<ul>
+<li>启用流式输出，边生成边返回</li>
+<li>优化网络链路，使用就近接入点</li>
+<li>减少 Prefill 阶段的计算量（缩短 Prompt）</li>
+</ul>
+<hr>
+<h2 id="72-多级缓存策略"><a class="header" href="#72-多级缓存策略">7.2 多级缓存策略</a></h2>
+<h3 id="721-响应缓存"><a class="header" href="#721-响应缓存">7.2.1 响应缓存</a></h3>
+<p>对于重复或相似问题，直接返回缓存结果：</p>
+<pre><code class="language-python">import hashlib
+import redis
+from datetime import timedelta
+
+class ResponseCache:
+    def __init__(self, redis_client):
+        self.redis = redis_client
+        self.ttl = timedelta(hours=24)
+    
+    def _get_cache_key(self, question):
+        """生成缓存 Key"""
+        return f"qa_cache:{hashlib.md5(question.encode()).hexdigest()}"
+    
+    def get(self, question):
+        """获取缓存"""
+        key = self._get_cache_key(question)
+        cached = self.redis.get(key)
+        if cached:
+            return json.loads(cached)
+        return None
+    
+    def set(self, question, answer):
+        """设置缓存"""
+        key = self._get_cache_key(question)
+        self.redis.setex(
+            key,
+            self.ttl,
+            json.dumps(answer, ensure_ascii=False)
+        )
+
+# 使用示例
+cache = ResponseCache(redis.Redis())
+
+def cached_qa(question):
+    # 先查缓存
+    cached_answer = cache.get(question)
+    if cached_answer:
+        return cached_answer
+    
+    # 缓存未命中，调用 API
+    answer = call_llm_api(question)
+    
+    # 写入缓存
+    cache.set(question, answer)
+    
+    return answer
+</code></pre>
+<h3 id="722-语义缓存"><a class="header" href="#722-语义缓存">7.2.2 语义缓存</a></h3>
+<p>使用向量相似度匹配相似问题：</p>
+<pre><code class="language-python">class SemanticCache:
+    def __init__(self, dashvector_client, threshold=0.9):
+        self.client = dashvector_client
+        self.collection = client.get('qa_cache')
+        self.threshold = threshold  # 相似度阈值
+    
+    def search(self, question):
+        """搜索相似问题的缓存"""
+        # 问题向量化
+        query_vector = get_embedding(question)
+        
+        # 检索最相似的缓存
+        result = self.collection.query(
+            vector=query_vector,
+            topk=1,
+            include_fields=['question', 'answer']
+        )
+        
+        if result.docs:
+            doc = result.docs[0]
+            similarity = doc.score
+            
+            if similarity &gt;= self.threshold:
+                return doc.fields['answer']
+        
+        return None
+    
+    def store(self, question, answer):
+        """存储问答对"""
+        vector = get_embedding(question)
+        doc = Doc(
+            id=f"cache_{int(time.time())}",
+            vector=vector,
+            fields={
+                'question': question,
+                'answer': answer
+            }
+        )
+        self.collection.upsert([doc])
+
+# 语义缓存可命中相似问题
+# 用户问："如何重置密码？"
+# 可命中缓存："密码忘了怎么办？"
+</code></pre>
+<h3 id="723-上下文缓存"><a class="header" href="#723-上下文缓存">7.2.3 上下文缓存</a></h3>
+<p>利用百炼平台的上下文缓存功能：</p>
+<pre><code class="language-python"># 对于固定的系统 Prompt 和知识库文档
+response = Generation.call(
+    model='qwen3.6-plus',
+    messages=[
+        {'role': 'system', 'content': LONG_SYSTEM_PROMPT},
+        {'role': 'user', 'content': user_question}
+    ],
+    use_context_cache=True  # 开启上下文缓存
+)
+
+# 第二次调用时，系统 Prompt 部分直接从缓存读取
+# 可节省约 50% 的成本和延迟
+</code></pre>
+<hr>
+<h2 id="73-批处理优化"><a class="header" href="#73-批处理优化">7.3 批处理优化</a></h2>
+<h3 id="731-请求合并"><a class="header" href="#731-请求合并">7.3.1 请求合并</a></h3>
+<p>将多个小请求合并为批量请求：</p>
+<pre><code class="language-python">import asyncio
+from collections import deque
+
+class BatchProcessor:
+    def __init__(self, batch_size=10, max_wait_ms=100):
+        self.batch_size = batch_size
+        self.max_wait_ms = max_wait_ms
+        self.queue = deque()
+        self.lock = asyncio.Lock()
+    
+    async def submit(self, request):
+        """提交请求"""
+        future = asyncio.Future()
+        self.queue.append((request, future))
+        
+        # 如果队列满了，立即处理
+        if len(self.queue) &gt;= self.batch_size:
+            await self.process_batch()
+        
+        return await future
+    
+    async def process_batch(self):
+        """处理一批请求"""
+        async with self.lock:
+            if not self.queue:
+                return
+            
+            # 取出当前批次
+            batch = list(self.queue)[:self.batch_size]
+            del self.queue[:self.batch_size]
+        
+        requests = [r for r, _ in batch]
+        futures = [f for _, f in batch]
+        
+        # 批量调用 API
+        results = await self.batch_api_call(requests)
+        
+        # 设置结果
+        for future, result in zip(futures, results):
+            future.set_result(result)
+    
+    async def batch_api_call(self, requests):
+        """实际调用批量 API"""
+        # 使用 DashScope 的 batch 接口
+        response = Generation.batch_call(
+            model='qwen3.6-plus',
+            requests=requests
+        )
+        return response
+
+# 使用示例
+processor = BatchProcessor(batch_size=10)
+
+async def handle_user_question(question):
+    result = await processor.submit({'messages': [{'role': 'user', 'content': question}]})
+    return result
+</code></pre>
+<h3 id="732-动态批处理"><a class="header" href="#732-动态批处理">7.3.2 动态批处理</a></h3>
+<p>根据负载动态调整批大小：</p>
+<pre><code class="language-python">class DynamicBatcher:
+    def __init__(self):
+        self.current_batch_size = 10
+        self.latency_history = []
+    
+    def adjust_batch_size(self, avg_latency):
+        """根据延迟动态调整批大小"""
+        target_latency = 200  # 目标延迟 200ms
+        
+        if avg_latency &gt; target_latency * 1.5:
+            # 延迟过高，减小批次
+            self.current_batch_size = max(1, self.current_batch_size - 2)
+        elif avg_latency &lt; target_latency * 0.7:
+            # 延迟较低，增大批次
+            self.current_batch_size = min(50, self.current_batch_size + 2)
+        
+        return self.current_batch_size
+</code></pre>
+<hr>
+<h2 id="74-模型压缩"><a class="header" href="#74-模型压缩">7.4 模型压缩</a></h2>
+<h3 id="741-量化quantization"><a class="header" href="#741-量化quantization">7.4.1 量化（Quantization）</a></h3>
+<p>将模型权重从 FP32 转换为 INT8/INT4：</p>
+<pre><code>原始模型 (FP32): 每个参数 4 字节
+INT8 量化后：每个参数 1 字节，体积减少 75%
+INT4 量化后：每个参数 0.5 字节，体积减少 87.5%
+</code></pre>
+<p><strong>量化效果对比：</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>量化精度</th><th>模型体积</th><th>推理速度</th><th>精度损失</th></tr>
+</thead>
+<tbody>
+<tr><td>FP32</td><td>14GB</td><td>1x</td><td>0%</td></tr>
+<tr><td>INT8</td><td>3.5GB</td><td>2-3x</td><td>&lt;1%</td></tr>
+<tr><td>INT4</td><td>1.75GB</td><td>3-4x</td><td>1-3%</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="742-知识蒸馏knowledge-distillation"><a class="header" href="#742-知识蒸馏knowledge-distillation">7.4.2 知识蒸馏（Knowledge Distillation）</a></h3>
+<p>用大模型（教师）训练小模型（学生）：</p>
+<pre><code class="language-python"># 伪代码示例
+def distill_loss(student_output, teacher_output, temperature=4.0):
+    """
+    知识蒸馏损失函数
+    """
+    # 软化概率分布
+    student_soft = softmax(student_output / temperature)
+    teacher_soft = softmax(teacher_output / temperature)
+    
+    # KL 散度
+    kd_loss = kl_divergence(student_soft, teacher_soft)
+    
+    # 结合真实标签的交叉熵
+    ce_loss = cross_entropy(student_output, true_labels)
+    
+    return kd_loss + ce_loss
+
+# 训练后，小模型可达到大模型 90%+ 的效果
+# 但推理速度快 3-5 倍
+</code></pre>
+<h3 id="743-阿里云百炼模型优化"><a class="header" href="#743-阿里云百炼模型优化">7.4.3 阿里云百炼模型优化</a></h3>
+<pre><code class="language-python"># 百炼平台提供自动优化选项
+response = Generation.call(
+    model='qwen3.6-plus',
+    messages=messages,
+    optimization_config={
+        'quantization': 'int8',  # INT8 量化
+        'use_cache': True,       # 启用 KV Cache
+        'max_batch_size': 32     # 最大批大小
+    }
+)
+</code></pre>
+<hr>
+<h2 id="75-流式输出与增量渲染"><a class="header" href="#75-流式输出与增量渲染">7.5 流式输出与增量渲染</a></h2>
+<h3 id="751-服务端流式"><a class="header" href="#751-服务端流式">7.5.1 服务端流式</a></h3>
+<pre><code class="language-python">@app.route('/api/chat/stream')
+def chat_stream():
+    def generate():
+        responses = Generation.call(
+            model='qwen3.6-plus',
+            messages=[{'role': 'user', 'content': request.args.get('q')}],
+            stream=True,
+            incremental_output=True
+        )
+        
+        for response in responses:
+            delta = response.output.choices[0].message.content
+            yield f"data: {json.dumps({'delta': delta})}\n\n"
+    
+    return Response(generate(), mimetype='text/event-stream')
+</code></pre>
+<h3 id="752-前端增量渲染"><a class="header" href="#752-前端增量渲染">7.5.2 前端增量渲染</a></h3>
+<pre><code class="language-javascript">// 前端 SSE 接收
+const eventSource = new EventSource('/api/chat/stream?q=' + encodeURIComponent(question));
+
+let fullAnswer = '';
+eventSource.onmessage = (event) =&gt; {
+    const data = JSON.parse(event.data);
+    fullAnswer += data.delta;
+    
+    // 实时更新 UI
+    document.getElementById('answer').innerHTML = marked.parse(fullAnswer);
+    
+    // 自动滚动到底部
+    window.scrollTo(0, document.body.scrollHeight);
+};
+</code></pre>
+<hr>
+<h2 id="76-性能监控"><a class="header" href="#76-性能监控">7.6 性能监控</a></h2>
+<h3 id="761-关键指标"><a class="header" href="#761-关键指标">7.6.1 关键指标</a></h3>
+<pre><code class="language-python">metrics = {
+    'latency_p50': 150,    # 中位数延迟
+    'latency_p95': 300,    # P95 延迟
+    'latency_p99': 500,    # P99 延迟
+    'throughput_qps': 50,  # 每秒查询数
+    'token_per_second': 1000,  # 每秒生成 token 数
+    'cache_hit_rate': 0.35,    # 缓存命中率
+    'error_rate': 0.001        # 错误率
+}
+</code></pre>
+<h3 id="762-prometheus-监控"><a class="header" href="#762-prometheus-监控">7.6.2 Prometheus 监控</a></h3>
+<pre><code class="language-python">from prometheus_client import Counter, Histogram, start_http_server
+
+# 定义指标
+REQUEST_COUNT = Counter('llm_requests_total', 'Total LLM requests')
+REQUEST_LATENCY = Histogram('llm_request_latency_seconds', 'LLM request latency')
+TOKEN_COUNT = Counter('llm_tokens_total', 'Total tokens', ['type'])
+
+# 埋点
+@REQUEST_LATENCY.time()
+def call_llm_with_metrics(question):
+    REQUEST_COUNT.inc()
+    response = call_llm(question)
+    TOKEN_COUNT.labels(type='input').inc(response.usage.input_tokens)
+    TOKEN_COUNT.labels(type='output').inc(response.usage.output_tokens)
+    return response
+
+# 启动监控服务器
+start_http_server(8000)
+</code></pre>
+<h3 id="763-性能看板"><a class="header" href="#763-性能看板">7.6.3 性能看板</a></h3>
+<p>使用 Grafana 搭建可视化看板：</p>
+<pre><code class="language-yaml"># dashboard.yaml
+dashboard:
+  title: "大模型应用性能监控"
+  panels:
+    - title: "请求延迟分布"
+      type: "heatmap"
+      query: "histogram_quantile(0.95, rate(llm_request_latency_seconds_bucket[5m]))"
+    
+    - title: "QPS 趋势"
+      type: "graph"
+      query: "rate(llm_requests_total[1m])"
+    
+    - title: "缓存命中率"
+      type: "gauge"
+      query: "rate(cache_hits_total[5m]) / rate(cache_requests_total[5m])"
+    
+    - title: "Token 生成速率"
+      type: "graph"
+      query: "rate(llm_tokens_total{type='output'}[1m])"
+</code></pre>
+<hr>
+<h2 id="本章小结"><a class="header" href="#本章小结">本章小结</a></h2>
+<p>本章系统讲解了大模型应用的性能优化：</p>
+<ol>
+<li><strong>延迟分析</strong>：理解 Prefill 和 Decoding 阶段的延迟构成，针对性优化</li>
+<li><strong>多级缓存</strong>：响应缓存、语义缓存、上下文缓存三层体系，可命中 30-50% 的请求</li>
+<li><strong>批处理优化</strong>：请求合并、动态批大小，提升吞吐量</li>
+<li><strong>模型压缩</strong>：量化、蒸馏等技术，在精度损失&lt;3% 的情况下提速 3-4 倍</li>
+<li><strong>流式输出</strong>：服务端流式 + 前端增量渲染，大幅降低用户感知延迟</li>
+<li><strong>性能监控</strong>：建立完善的指标体系和可视化看板</li>
+</ol>
+<p>性能优化是一个持续的过程。技术决策者应建立性能基线，定期评估优化效果，在成本、质量、速度之间找到最佳平衡点。</p>
+<hr>
+<h2 id="延伸阅读"><a class="header" href="#延伸阅读">延伸阅读</a></h2>
+<ol>
+<li><a href="https://help.aliyun.com/zh/model-studio/performance-optimization">阿里云百炼性能优化指南</a></li>
+<li>《Efficient NLP》- Hugging Face</li>
+<li>vLLM 项目：https://github.com/vllm-project/vllm</li>
+<li>ONNX Runtime 文档：https://onnxruntime.ai/</li>
+</ol>
+<hr>
+<p><strong>下一章预告</strong>：第 8 章将探讨大模型应用部署与运维，包括容器化部署、CI/CD 流程、灰度发布、监控告警、故障排查等生产环境必备技能。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../chapter-06/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../chapter-08/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../chapter-06/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../chapter-08/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

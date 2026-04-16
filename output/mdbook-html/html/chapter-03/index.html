@@ -1,0 +1,718 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 3 章 大模型 API 开发与集成 - 云上大模型应用开发实践</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="面向技术决策者的阿里云大模型应用开发指南，涵盖 Agent 与 RAG 实战">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-218f5815.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-46fe4919.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">云上大模型应用开发实践</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-3-章-大模型-api-开发与集成"><a class="header" href="#第-3-章-大模型-api-开发与集成">第 3 章 大模型 API 开发与集成</a></h1>
+<blockquote>
+<p><strong>本章导读</strong></p>
+<p>API 是大模型能力对外输出的核心接口。对于技术决策者而言，理解 API 设计规范、掌握 SDK 使用方法、建立完善的认证鉴权与限流熔断机制，是构建稳定可靠的大模型应用的关键。本章将从 RESTful API 设计原则出发，深入讲解阿里云百炼平台的 API 调用流程、多语言 SDK 使用技巧、安全防护策略以及性能优化方法。</p>
+<p><strong>核心议题：</strong></p>
+<ul>
+<li>RESTful API 设计规范与大模型场景适配</li>
+<li>阿里云百炼 API 的认证鉴权机制</li>
+<li>Python/Java/Node.js 多语言 SDK 实战</li>
+<li>限流、熔断、重试策略的工程实现</li>
+<li>API 版本管理与向后兼容实践</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="31-restful-api-设计规范"><a class="header" href="#31-restful-api-设计规范">3.1 RESTful API 设计规范</a></h2>
+<h3 id="311-大模型-api-的特殊性"><a class="header" href="#311-大模型-api-的特殊性">3.1.1 大模型 API 的特殊性</a></h3>
+<p>传统的 RESTful API 设计遵循“资源导向“原则，将系统抽象为一系列资源（Resource），通过 HTTP 动词（GET、POST、PUT、DELETE）对资源进行操作。然而，大模型 API 具有其特殊性：</p>
+<p><strong>特点一：无状态会话 vs 有状态对话</strong></p>
+<ul>
+<li>传统 API：每次请求独立，服务器不保存客户端状态</li>
+<li>大模型 API：多轮对话需要维护上下文历史，本质是有状态的</li>
+</ul>
+<p><strong>特点二：确定性响应 vs 概率性生成</strong></p>
+<ul>
+<li>传统 API：相同输入必然产生相同输出</li>
+<li>大模型 API：即使 temperature=0，仍可能存在微小差异</li>
+</ul>
+<p><strong>特点三：低延迟要求 vs 高计算密度</strong></p>
+<ul>
+<li>传统 API：通常在毫秒级返回</li>
+<li>大模型 API：首 token 延迟 100-500ms，完整响应可能数秒</li>
+</ul>
+<p>基于这些特点，大模型 API 的设计需要在标准 RESTful 规范基础上做出调整。</p>
+<h3 id="312-端点endpoint设计"><a class="header" href="#312-端点endpoint设计">3.1.2 端点（Endpoint）设计</a></h3>
+<p>阿里云百炼平台采用以下端点设计规范：</p>
+<pre><code># 基础 URL
+https://dashscope.aliyuncs.com/api/v1
+
+# 文本生成
+POST /services/aigc/text-generation/generation
+
+# 多模态生成
+POST /services/aigc/multimodal-generation/generation
+
+# embeddings 向量化
+POST /services/embeddings/text-embedding/text-embedding
+
+# 语音合成
+POST /services/audio/tts/synthesis
+
+# 语音识别
+POST /services/audio/asr/transcription
+</code></pre>
+<p><strong>设计要点：</strong></p>
+<ol>
+<li><strong>版本化路径</strong>：<code>/api/v1/</code> 明确标识 API 版本，便于后续迭代</li>
+<li><strong>服务分类</strong>：<code>/services/aigc/</code>、<code>/services/embeddings/</code> 按能力类型分组</li>
+<li><strong>动词语义</strong>：使用具体动作（generation、synthesis）而非泛化的 <code>generate</code></li>
+<li><strong>复数形式</strong>：资源名称统一使用复数（如 <code>/embeddings</code>）</li>
+</ol>
+<h3 id="313-请求体request-body结构"><a class="header" href="#313-请求体request-body结构">3.1.3 请求体（Request Body）结构</a></h3>
+<p>标准的文本生成请求体结构如下：</p>
+<pre><code class="language-json">{
+  "model": "qwen3.6-plus",
+  "input": {
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是一个专业的编程助手。"
+      },
+      {
+        "role": "user",
+        "content": "请用 Python 写一个快速排序算法。"
+      }
+    ]
+  },
+  "parameters": {
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens": 1024,
+    "stream": false,
+    "stop": ["\n\n"],
+    "seed": 42
+  }
+}
+</code></pre>
+<p><strong>参数详解：</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>model</code></td><td>string</td><td>必填</td><td>模型名称，如 <code>qwen3.6-plus</code></td></tr>
+<tr><td><code>messages</code></td><td>array</td><td>必填</td><td>对话历史，包含 system/user/assistant 角色</td></tr>
+<tr><td><code>temperature</code></td><td>float</td><td>0.7</td><td>控制随机性，0 为确定性，2 为高度随机</td></tr>
+<tr><td><code>top_p</code></td><td>float</td><td>0.9</td><td>核采样参数，控制词汇选择范围</td></tr>
+<tr><td><code>max_tokens</code></td><td>integer</td><td>模型上限</td><td>限制最大输出长度</td></tr>
+<tr><td><code>stream</code></td><td>boolean</td><td>false</td><td>是否启用流式输出</td></tr>
+<tr><td><code>stop</code></td><td>array</td><td>null</td><td>自定义停止词序列</td></tr>
+<tr><td><code>seed</code></td><td>integer</td><td>null</td><td>随机种子，用于结果复现</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="314-响应体response-body结构"><a class="header" href="#314-响应体response-body结构">3.1.4 响应体（Response Body）结构</a></h3>
+<p>标准响应体结构：</p>
+<pre><code class="language-json">{
+  "request_id": "8f3a2c1b-5d6e-4f7a-8b9c-0d1e2f3a4b5c",
+  "code": "",
+  "message": "",
+  "output": {
+    "text": "def quicksort(arr):...",
+    "finish_reason": "stop"
+  },
+  "usage": {
+    "input_tokens": 45,
+    "output_tokens": 89,
+    "total_tokens": 134
+  }
+}
+</code></pre>
+<p><strong>字段说明：</strong></p>
+<ul>
+<li><code>request_id</code>：唯一请求标识，用于问题排查和日志追踪</li>
+<li><code>code</code>：错误码，空字符串表示成功</li>
+<li><code>message</code>：错误描述，成功时为空</li>
+<li><code>output.text</code>：生成的文本内容</li>
+<li><code>output.finish_reason</code>：结束原因（<code>stop</code> 正常停止 / <code>length</code> 达到 max_tokens / <code>error</code> 出错）</li>
+<li><code>usage</code>：Token 用量统计，用于计费和对账</li>
+</ul>
+<h3 id="315-错误处理规范"><a class="header" href="#315-错误处理规范">3.1.5 错误处理规范</a></h3>
+<p>统一的错误响应格式：</p>
+<pre><code class="language-json">{
+  "request_id": "8f3a2c1b-5d6e-4f7a-8b9c-0d1e2f3a4b5c",
+  "code": "InvalidParameter",
+  "message": "The parameter 'temperature' is out of range [0, 2].",
+  "http_status_code": 400
+}
+</code></pre>
+<p><strong>常见错误码：</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>错误码</th><th>HTTP 状态码</th><th>说明</th><th>解决方案</th></tr>
+</thead>
+<tbody>
+<tr><td><code>InvalidParameter</code></td><td>400</td><td>参数格式错误或超出范围</td><td>检查参数类型和取值范围</td></tr>
+<tr><td><code>InvalidApiKey</code></td><td>401</td><td>API Key 无效或已过期</td><td>重新获取 API Key</td></tr>
+<tr><td><code>QuotaExhausted</code></td><td>403</td><td>配额已用尽</td><td>购买更多额度或等待下月重置</td></tr>
+<tr><td><code>ModelNotFound</code></td><td>404</td><td>指定的模型不存在</td><td>确认模型名称正确</td></tr>
+<tr><td><code>RateLimitExceeded</code></td><td>429</td><td>请求频率超限</td><td>降低调用频率或申请提升配额</td></tr>
+<tr><td><code>InternalError</code></td><td>500</td><td>服务端内部错误</td><td>稍后重试，如持续出现需提交工单</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="32-认证鉴权机制"><a class="header" href="#32-认证鉴权机制">3.2 认证鉴权机制</a></h2>
+<h3 id="321-api-key-管理"><a class="header" href="#321-api-key-管理">3.2.1 API Key 管理</a></h3>
+<p>阿里云百炼平台采用 API Key 作为主要的认证方式。</p>
+<p><strong>获取 API Key 的步骤：</strong></p>
+<ol>
+<li>登录阿里云控制台 (https://console.aliyun.com)</li>
+<li>进入“访问控制 RAM“ → “身份管理” → “用户”</li>
+<li>创建 RAM 用户（建议为每个应用创建独立用户）</li>
+<li>为用户授予“百炼平台只读权限“或“百炼平台管理权限“</li>
+<li>创建 AccessKey（包括 AccessKeyId 和 AccessKeySecret）</li>
+</ol>
+<p><strong>安全最佳实践：</strong></p>
+<p>✅ <strong>推荐做法：</strong></p>
+<ul>
+<li>为每个环境（开发/测试/生产）创建独立的 API Key</li>
+<li>定期轮换 API Key（建议每季度一次）</li>
+<li>使用环境变量或密钥管理服务存储 API Key</li>
+<li>在代码中绝不硬编码 API Key</li>
+<li>启用 API Key 使用监控和异常告警</li>
+</ul>
+<p>❌ <strong>禁止做法：</strong></p>
+<ul>
+<li>将 API Key 提交到 Git 仓库</li>
+<li>在前端代码中暴露 API Key</li>
+<li>多人共享同一个 API Key</li>
+<li>长期不更换 API Key</li>
+</ul>
+<h3 id="322-签名认证流程"><a class="header" href="#322-签名认证流程">3.2.2 签名认证流程</a></h3>
+<p>对于需要更高安全性的场景，百炼平台支持基于 HMAC-SHA256 的签名认证。签名生成需要使用 AccessKey Secret 对请求内容进行加密，确保请求的完整性和真实性。</p>
+<h3 id="323-sts-临时凭证"><a class="header" href="#323-sts-临时凭证">3.2.3 STS 临时凭证</a></h3>
+<p>对于移动端或前端应用，建议使用 STS（Security Token Service）临时凭证，避免长期凭证泄露风险。STS 临时凭证的有效期通常为 1-12 小时，过期自动失效，大幅降低了安全风险。</p>
+<hr>
+<h2 id="33-多语言-sdk-实战"><a class="header" href="#33-多语言-sdk-实战">3.3 多语言 SDK 实战</a></h2>
+<h3 id="331-python-sdk"><a class="header" href="#331-python-sdk">3.3.1 Python SDK</a></h3>
+<p><strong>安装：</strong></p>
+<pre><code class="language-bash">pip install dashscope
+</code></pre>
+<p><strong>基础调用示例：</strong></p>
+<pre><code class="language-python">import os
+from http import HTTPStatus
+import dashscope
+from dashscope import Generation
+
+# 从环境变量读取 API Key（推荐）
+dashscope.api_key = os.getenv("DASHSCOPE_API_KEY")
+
+response = Generation.call(
+    model='qwen3.6-plus',
+    messages=[
+        {'role': 'system', 'content': '你是一个专业的编程助手。'},
+        {'role': 'user', 'content': '请用 Python 写一个二分查找算法。'}
+    ],
+    temperature=0.7,
+    max_tokens=1024
+)
+
+if response.status_code == HTTPStatus.OK:
+    print(f"回复：{response.output.choices[0].message.content}")
+    print(f"Token 用量：{response.usage}")
+else:
+    print(f"请求失败：{response.code} - {response.message}")
+</code></pre>
+<p><strong>流式输出示例：</strong></p>
+<pre><code class="language-python">responses = Generation.call(
+    model='qwen3.6-plus',
+    messages=[{'role': 'user', 'content': '请写一篇关于人工智能的短文。'}],
+    stream=True,
+    incremental_output=True
+)
+
+for response in responses:
+    if response.status_code == HTTPStatus.OK:
+        delta = response.output.choices[0].message.content
+        print(delta, end='', flush=True)
+</code></pre>
+<h3 id="332-java-sdk"><a class="header" href="#332-java-sdk">3.3.2 Java SDK</a></h3>
+<p><strong>Maven 依赖：</strong></p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+    &lt;artifactId&gt;dashscope-sdk-java&lt;/artifactId&gt;
+    &lt;version&gt;2.15.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p><strong>基础调用示例：</strong></p>
+<pre><code class="language-java">import com.alibaba.dashscope.aigc.generation.Generation;
+import com.alibaba.dashscope.aigc.generation.GenerationParam;
+import com.alibaba.dashscope.aigc.generation.GenerationResult;
+import com.alibaba.dashscope.common.Message;
+import com.alibaba.dashscope.common.Role;
+
+Generation gen = new Generation();
+
+Message userMsg = Message.builder()
+    .role(Role.USER.getValue())
+    .content("请用 Java 写一个单例模式。")
+    .build();
+
+GenerationParam param = GenerationParam.builder()
+    .apiKey("sk-xxxxxxxx")
+    .model("qwen3.6-plus")
+    .addMessage(userMsg)
+    .temperature(0.7)
+    .maxTokens(1024)
+    .build();
+
+GenerationResult result = gen.call(param);
+System.out.println("回复：" + result.getOutput().getChoices().get(0).getMessage().getContent());
+</code></pre>
+<h3 id="333-nodejs-sdk"><a class="header" href="#333-nodejs-sdk">3.3.3 Node.js SDK</a></h3>
+<p><strong>安装：</strong></p>
+<pre><code class="language-bash">npm install @alicloud/dashscope
+</code></pre>
+<p><strong>基础调用示例：</strong></p>
+<pre><code class="language-javascript">const DashScope = require('@alicloud/dashscope');
+
+const client = new DashScope({
+  accessKeyId: process.env.DASHSCOPE_API_KEY,
+});
+
+async function chat() {
+  const response = await client.invoke('qwen3.6-plus', {
+    messages: [
+      { role: 'user', content: '请用 JavaScript 写一个防抖函数。' }
+    ],
+    parameters: {
+      temperature: 0.7,
+      max_tokens: 1024
+    }
+  });
+  
+  console.log('回复:', response.output.choices[0].message.content);
+}
+
+chat();
+</code></pre>
+<h3 id="334-http-原生调用"><a class="header" href="#334-http-原生调用">3.3.4 HTTP 原生调用</a></h3>
+<p>对于不支持 SDK 的语言或环境，可以直接使用 HTTP 请求：</p>
+<pre><code class="language-python">import requests
+
+url = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
+headers = {
+    "Authorization": "Bearer sk-xxxxxxxx",
+    "Content-Type": "application/json"
+}
+payload = {
+    "model": "qwen3.6-plus",
+    "input": {
+        "messages": [{"role": "user", "content": "你好"}]
+    }
+}
+
+response = requests.post(url, headers=headers, json=payload)
+result = response.json()
+print(f"回复：{result['output']['text']}")
+</code></pre>
+<hr>
+<h2 id="34-限流熔断策略"><a class="header" href="#34-限流熔断策略">3.4 限流熔断策略</a></h2>
+<h3 id="341-限流rate-limiting"><a class="header" href="#341-限流rate-limiting">3.4.1 限流（Rate Limiting）</a></h3>
+<p><strong>百炼平台的限流规则：</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>用户等级</th><th>QPS 限制</th><th>RPM 限制</th><th>并发连接数</th></tr>
+</thead>
+<tbody>
+<tr><td>免费用户</td><td>2 QPS</td><td>60 RPM</td><td>5</td></tr>
+<tr><td>按量付费</td><td>10 QPS</td><td>300 RPM</td><td>20</td></tr>
+<tr><td>企业套餐</td><td>50 QPS</td><td>1500 RPM</td><td>100</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>客户端限流实现（令牌桶算法）：</strong></p>
+<pre><code class="language-python">import time
+from threading import Lock
+
+class RateLimiter:
+    def __init__(self, rate, capacity):
+        self.rate = rate  # 每秒允许的请求数
+        self.capacity = capacity  # 桶容量
+        self.tokens = capacity
+        self.last_update = time.time()
+        self.lock = Lock()
+    
+    def acquire(self):
+        with self.lock:
+            now = time.time()
+            elapsed = now - self.last_update
+            self.tokens = min(self.capacity, self.tokens + elapsed * self.rate)
+            self.last_update = now
+            
+            if self.tokens &gt;= 1:
+                self.tokens -= 1
+                return True
+            return False
+
+# 使用示例
+limiter = RateLimiter(rate=10, capacity=20)
+
+if limiter.acquire():
+    response = call_api()
+else:
+    print("请求频率超限")
+</code></pre>
+<h3 id="342-熔断circuit-breaker"><a class="header" href="#342-熔断circuit-breaker">3.4.2 熔断（Circuit Breaker）</a></h3>
+<p>熔断器用于在服务连续失败时快速失败，避免雪崩效应：</p>
+<pre><code class="language-python">from enum import Enum
+
+class CircuitState(Enum):
+    CLOSED = "closed"
+    OPEN = "open"
+    HALF_OPEN = "half_open"
+
+class CircuitBreaker:
+    def __init__(self, failure_threshold=5, recovery_timeout=60):
+        self.failure_threshold = failure_threshold
+        self.recovery_timeout = recovery_timeout
+        self.failure_count = 0
+        self.last_failure_time = None
+        self.state = CircuitState.CLOSED
+    
+    def call(self, func, *args, **kwargs):
+        if self.state == CircuitState.OPEN:
+            if time.time() - self.last_failure_time &gt; self.recovery_timeout:
+                self.state = CircuitState.HALF_OPEN
+            else:
+                raise Exception("服务暂时不可用")
+        
+        try:
+            result = func(*args, **kwargs)
+            self.failure_count = 0
+            self.state = CircuitState.CLOSED
+            return result
+        except Exception as e:
+            self.failure_count += 1
+            self.last_failure_time = time.time()
+            if self.failure_count &gt;= self.failure_threshold:
+                self.state = CircuitState.OPEN
+            raise e
+</code></pre>
+<h3 id="343-重试retry策略"><a class="header" href="#343-重试retry策略">3.4.3 重试（Retry）策略</a></h3>
+<p>带指数退避的智能重试：</p>
+<pre><code class="language-python">import time
+import random
+
+def retry_with_backoff(max_retries=3, base_delay=1.0, max_delay=60.0):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            last_exception = None
+            for attempt in range(max_retries + 1):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    last_exception = e
+                    if attempt == max_retries:
+                        break
+                    delay = min(base_delay * (2 ** attempt), max_delay)
+                    delay += random.uniform(0, delay * 0.1)  # 抖动
+                    print(f"重试 {attempt+1}/{max_retries}, 等待 {delay:.2f}s")
+                    time.sleep(delay)
+            raise last_exception
+        return wrapper
+    return decorator
+
+@retry_with_backoff(max_retries=3)
+def robust_api_call():
+    return call_dashscope_api()
+</code></pre>
+<hr>
+<h2 id="35-api-版本管理"><a class="header" href="#35-api-版本管理">3.5 API 版本管理</a></h2>
+<h3 id="351-版本号规范"><a class="header" href="#351-版本号规范">3.5.1 版本号规范</a></h3>
+<p>采用语义化版本号（Semantic Versioning）：</p>
+<pre><code>主版本号。次版本号。修订号
+Major.Minor.Patch
+
+- Major: 不兼容的 API 变更
+- Minor: 向后兼容的功能新增
+- Patch: 向后兼容的问题修复
+</code></pre>
+<h3 id="352-版本过渡策略"><a class="header" href="#352-版本过渡策略">3.5.2 版本过渡策略</a></h3>
+<p><strong>并行运行期：</strong></p>
+<ul>
+<li>新旧版本同时可用至少 3 个月</li>
+<li>提供迁移指南和自动化脚本</li>
+<li>监控旧版本使用情况</li>
+</ul>
+<p><strong>废弃通知：</strong></p>
+<ul>
+<li>HTTP Response Header 添加 <code>Deprecation</code> 字段</li>
+<li>返回警告信息提示升级</li>
+<li>定期发送邮件通知</li>
+</ul>
+<p><strong>最终下线：</strong></p>
+<ul>
+<li>提前 30 天发送最后通牒</li>
+<li>保留错误日志便于问题排查</li>
+<li>提供紧急回滚方案</li>
+</ul>
+<hr>
+<h2 id="本章小结"><a class="header" href="#本章小结">本章小结</a></h2>
+<p>本章系统讲解了大模型 API 开发与集成的核心知识：</p>
+<ol>
+<li>
+<p><strong>RESTful API 设计</strong>：针对大模型场景的特殊性，设计了合理的端点、请求体和响应体结构，规范了错误处理流程。</p>
+</li>
+<li>
+<p><strong>认证鉴权</strong>：采用 API Key 作为主要认证方式，支持 HMAC-SHA256 签名和 STS 临时凭证，满足不同的安全需求。</p>
+</li>
+<li>
+<p><strong>多语言 SDK</strong>：提供了 Python、Java、Node.js 等多种语言的 SDK 使用示例，以及 HTTP 原生调用方法。</p>
+</li>
+<li>
+<p><strong>弹性防护</strong>：通过限流、熔断、重试三重机制，构建了高可用的 API 调用体系，有效应对流量峰值和服务异常。</p>
+</li>
+<li>
+<p><strong>版本管理</strong>：采用语义化版本号，制定清晰的版本过渡策略，确保 API 演进的平滑性。</p>
+</li>
+</ol>
+<p>掌握这些技能，技术决策者可以带领团队构建出稳定、安全、高效的大模型应用。</p>
+<hr>
+<h2 id="延伸阅读"><a class="header" href="#延伸阅读">延伸阅读</a></h2>
+<ol>
+<li><a href="https://help.aliyun.com/zh/model-studio/developer-reference/">阿里云百炼 API 参考文档</a></li>
+<li><a href="https://github.com/aliyun/alibabacloud-dashscope-sdk-python">DashScope SDK GitHub</a></li>
+<li>《微服务架构设计模式》- Chris Richardson</li>
+<li>《API Design Patterns》- JJ Geewax</li>
+</ol>
+<hr>
+<p><strong>下一章预告</strong>：第 4 章将深入探讨 RAG 应用架构与实战，包括知识库构建、向量检索、文档切分、检索优化等核心技术，并提供完整的企业级 RAG 系统实现案例。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../chapter-02/section-05.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../chapter-04/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../chapter-02/section-05.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../chapter-04/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

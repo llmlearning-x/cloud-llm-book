@@ -1,0 +1,769 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 8 章 大模型应用部署与运维 - 云上大模型应用开发实践</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="面向技术决策者的阿里云大模型应用开发指南，涵盖 Agent 与 RAG 实战">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-218f5815.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-46fe4919.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">云上大模型应用开发实践</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-8-章-大模型应用部署与运维"><a class="header" href="#第-8-章-大模型应用部署与运维">第 8 章 大模型应用部署与运维</a></h1>
+<blockquote>
+<p><strong>本章导读</strong></p>
+<p>从开发环境到生产环境的部署与运维是大模型应用落地的最后一公里。本章将讲解容器化部署、CI/CD流程、灰度发布策略、监控告警体系、故障排查方法等生产环境必备技能。</p>
+<p><strong>核心议题：</strong></p>
+<ul>
+<li>Docker 容器化部署</li>
+<li>Kubernetes 集群编排</li>
+<li>CI/CD自动化流程</li>
+<li>灰度发布与回滚</li>
+<li>监控告警体系</li>
+<li>故障排查与应急响应</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="81-容器化部署"><a class="header" href="#81-容器化部署">8.1 容器化部署</a></h2>
+<h3 id="811-dockerfile-编写"><a class="header" href="#811-dockerfile-编写">8.1.1 Dockerfile 编写</a></h3>
+<pre><code class="language-dockerfile"># 基础镜像
+FROM python:3.11-slim
+
+# 设置工作目录
+WORKDIR /app
+
+# 安装依赖
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 复制代码
+COPY . .
+
+# 设置环境变量
+ENV DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
+ENV LOG_LEVEL=INFO
+
+# 暴露端口
+EXPOSE 8000
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# 启动命令
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+</code></pre>
+<h3 id="812-docker-compose-编排"><a class="header" href="#812-docker-compose-编排">8.1.2 Docker Compose 编排</a></h3>
+<pre><code class="language-yaml">version: '3.8'
+
+services:
+  # 大模型应用服务
+  llm-app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
+      - REDIS_HOST=redis
+      - MYSQL_HOST=mysql
+    depends_on:
+      - redis
+      - mysql
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+    restart: always
+  
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+  
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=llm_app
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  
+  # Nginx 反向代理
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - llm-app
+
+volumes:
+  redis-data:
+  mysql-data:
+</code></pre>
+<h3 id="813-kubernetes-部署"><a class="header" href="#813-kubernetes-部署">8.1.3 Kubernetes 部署</a></h3>
+<pre><code class="language-yaml"># deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: llm-app
+  template:
+    metadata:
+      labels:
+        app: llm-app
+    spec:
+      containers:
+      - name: llm-app
+        image: registry.cn-beijing.aliyuncs.com/your-namespace/llm-app:v1.0.0
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DASHSCOPE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: llm-secrets
+              key: dashscope-api-key
+        - name: REDIS_HOST
+          value: "redis-service"
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+---
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-app-service
+spec:
+  selector:
+    app: llm-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: LoadBalancer
+
+---
+# hpa.yaml (自动扩缩容)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: llm-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: llm-app-deployment
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+</code></pre>
+<hr>
+<h2 id="82-cicd自动化流程"><a class="header" href="#82-cicd自动化流程">8.2 CI/CD自动化流程</a></h2>
+<h3 id="821-github-actions-配置"><a class="header" href="#821-github-actions-配置">8.2.1 GitHub Actions 配置</a></h3>
+<pre><code class="language-yaml"># .github/workflows/deploy.yml
+name: Deploy LLM Application
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # 测试
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pytest pytest-cov
+    
+    - name: Run tests
+      run: pytest --cov=app tests/
+    
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+
+  # 构建镜像
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Login to ACR
+      uses: docker/login-action@v2
+      with:
+        registry: registry.cn-beijing.aliyuncs.com
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+    
+    - name: Build and push
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: |
+          registry.cn-beijing.aliyuncs.com/your-namespace/llm-app:${{ github.sha }}
+          registry.cn-beijing.aliyuncs.com/your-namespace/llm-app:latest
+
+  # 部署到测试环境
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+    - uses: azure/k8s-set-context@v3
+      with:
+        kubeconfig: ${{ secrets.K8S_CONFIG_STAGING }}
+    
+    - name: Deploy to staging
+      run: |
+        kubectl set image deployment/llm-app-deployment \
+          llm-app=registry.cn-beijing.aliyuncs.com/your-namespace/llm-app:${{ github.sha }}
+        kubectl rollout status deployment/llm-app-deployment
+
+  # 部署到生产环境（需审批）
+  deploy-production:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+    - uses: azure/k8s-set-context@v3
+      with:
+        kubeconfig: ${{ secrets.K8S_CONFIG_PRODUCTION }}
+    
+    - name: Deploy to production
+      run: |
+        kubectl set image deployment/llm-app-deployment \
+          llm-app=registry.cn-beijing.aliyuncs.com/your-namespace/llm-app:${{ github.sha }}
+        kubectl rollout status deployment/llm-app-deployment
+</code></pre>
+<h3 id="822-蓝绿部署"><a class="header" href="#822-蓝绿部署">8.2.2 蓝绿部署</a></h3>
+<pre><code class="language-yaml"># 蓝绿部署脚本
+#!/bin/bash
+
+CURRENT_VERSION=$1
+NEW_VERSION=$2
+NAMESPACE="llm-prod"
+
+echo "开始蓝绿部署：$CURRENT_VERSION -&gt; $NEW_VERSION"
+
+# 1. 部署新版本（绿色）
+kubectl apply -f deployment-green.yaml -n $NAMESPACE
+kubectl set image deployment/llm-app-green llm-app=registry.cn-beijing.aliyuncs.com/your-namespace/llm-app:$NEW_VERSION -n $NAMESPACE
+
+# 2. 等待绿色就绪
+kubectl rollout status deployment/llm-app-green -n $NAMESPACE
+
+# 3. 运行冒烟测试
+./run-smoke-tests.sh green
+
+# 4. 切换流量
+kubectl patch service llm-app-service -n $NAMESPACE -p '{"spec":{"selector":{"pod-template-hash":"green"}}}'
+
+# 5. 观察 10 分钟
+sleep 600
+
+# 6. 如果没有问题，删除蓝色（旧版本）
+kubectl delete deployment llm-app-blue -n $NAMESPACE
+
+echo "蓝绿部署完成！"
+</code></pre>
+<hr>
+<h2 id="83-监控告警体系"><a class="header" href="#83-监控告警体系">8.3 监控告警体系</a></h2>
+<h3 id="831-日志收集"><a class="header" href="#831-日志收集">8.3.1 日志收集</a></h3>
+<pre><code class="language-yaml"># Fluentd 配置
+&lt;match llm.**&gt;
+  @type elasticsearch
+  host elasticsearch.logging.svc
+  port 9200
+  logstash_format true
+  logstash_prefix llm-logs
+  flush_interval 5s
+&lt;/match&gt;
+</code></pre>
+<p><strong>日志结构化：</strong></p>
+<pre><code class="language-python">import logging
+import json
+
+class JSONFormatter(logging.Formatter):
+    def format(self, record):
+        log_entry = {
+            'timestamp': self.formatTime(record),
+            'level': record.levelname,
+            'logger': record.name,
+            'message': record.getMessage(),
+            'module': record.module,
+            'function': record.funcName,
+            'line': record.lineno
+        }
+        
+        # 添加额外字段
+        if hasattr(record, 'user_id'):
+            log_entry['user_id'] = record.user_id
+        if hasattr(record, 'request_id'):
+            log_entry['request_id'] = record.request_id
+        if hasattr(record, 'token_usage'):
+            log_entry['token_usage'] = record.token_usage
+        
+        return json.dumps(log_entry, ensure_ascii=False)
+
+# 配置日志
+handler = logging.StreamHandler()
+handler.setFormatter(JSONFormatter())
+logger.addHandler(handler)
+</code></pre>
+<h3 id="832-告警规则"><a class="header" href="#832-告警规则">8.3.2 告警规则</a></h3>
+<pre><code class="language-yaml"># Prometheus AlertManager 配置
+groups:
+- name: llm-alerts
+  rules:
+  # 高错误率告警
+  - alert: HighErrorRate
+    expr: rate(llm_requests_error_total[5m]) / rate(llm_requests_total[5m]) &gt; 0.05
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "大模型应用错误率超过 5%"
+      description: "当前错误率：{{ $value | humanizePercentage }}"
+  
+  # 高延迟告警
+  - alert: HighLatency
+    expr: histogram_quantile(0.95, rate(llm_request_latency_seconds_bucket[5m])) &gt; 1
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "P95 延迟超过 1 秒"
+      description: "当前 P95 延迟：{{ $value | humanizeDuration }}"
+  
+  # Token 配额即将耗尽
+  - alert: TokenQuotaLow
+    expr: llm_token_quota_remaining &lt; 100000
+    for: 1h
+    labels:
+      severity: warning
+    annotations:
+      summary: "Token 配额剩余不足 10 万"
+      description: "剩余 Token: {{ $value }}"
+  
+  # Pod 重启频繁
+  - alert: PodRestartingFrequently
+    expr: rate(kube_pod_container_status_restarts_total[1h]) &gt; 0.5
+    for: 15m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Pod 频繁重启"
+      description: "过去 1 小时重启次数：{{ $value }}"
+</code></pre>
+<h3 id="833-告警通知"><a class="header" href="#833-告警通知">8.3.3 告警通知</a></h3>
+<pre><code class="language-yaml"># AlertManager 通知配置
+receivers:
+- name: 'dingtalk'
+  webhook_configs:
+  - url: 'http://webhook-dingtalk.monitoring.svc:8060/dingtalk/webhook1/send'
+    send_resolved: true
+
+- name: 'email'
+  email_configs:
+  - to: 'team@example.com'
+    from: 'alerts@example.com'
+    smarthost: 'smtp.example.com:587'
+    auth_username: 'alerts@example.com'
+    auth_password: 'xxx'
+
+- name: 'sms'
+  webhook_configs:
+  - url: 'http://sms-gateway.monitoring.svc/send'
+    send_resolved: false  # 只发送告警，不发送恢复通知
+
+route:
+  receiver: 'dingtalk'
+  routes:
+  - match:
+      severity: critical
+    receiver: 'sms'
+    continue: true
+  - match:
+      severity: warning
+    receiver: 'email'
+</code></pre>
+<hr>
+<h2 id="84-故障排查"><a class="header" href="#84-故障排查">8.4 故障排查</a></h2>
+<h3 id="841-常见问题诊断树"><a class="header" href="#841-常见问题诊断树">8.4.1 常见问题诊断树</a></h3>
+<pre><code>用户报告"请求失败"
+    │
+    ├─ 检查错误日志
+    │   ├─ "RateLimitExceeded" → 限流了，检查配额
+    │   ├─ "Timeout" → 检查网络和后端负载
+    │   └─ "InternalError" → 检查服务端状态
+    │
+    ├─ 检查指标
+    │   ├─ 错误率突增 → 查看最近变更
+    │   ├─ 延迟升高 → 检查资源使用率
+    │   └─ QPS 下降 → 检查上游流量
+    │
+    └─ 复现问题
+        ├─ 所有用户都失败 → 系统性故障
+        └─ 部分用户失败 → 个别场景问题
+</code></pre>
+<h3 id="842-排查命令速查"><a class="header" href="#842-排查命令速查">8.4.2 排查命令速查</a></h3>
+<pre><code class="language-bash"># 查看 Pod 状态
+kubectl get pods -n llm-prod
+kubectl describe pod &lt;pod-name&gt; -n llm-prod
+
+# 查看日志
+kubectl logs -f deployment/llm-app-deployment -n llm-prod
+kubectl logs -f &lt;pod-name&gt; -c llm-app -n llm-prod --tail=1000
+
+# 进入容器调试
+kubectl exec -it &lt;pod-name&gt; -n llm-prod -- /bin/bash
+
+# 查看资源使用
+kubectl top pods -n llm-prod
+kubectl top nodes
+
+# 查看事件
+kubectl get events -n llm-prod --sort-by='.lastTimestamp'
+
+# 临时扩容
+kubectl scale deployment llm-app-deployment --replicas=10 -n llm-prod
+
+# 回滚到上一版本
+kubectl rollout undo deployment/llm-app-deployment -n llm-prod
+</code></pre>
+<h3 id="843-应急预案模板"><a class="header" href="#843-应急预案模板">8.4.3 应急预案模板</a></h3>
+<pre><code class="language-markdown"># 应急预案：大模型服务中断
+
+## 故障等级
+P0 - 核心功能完全不可用
+
+## 响应流程
+
+### 1. 发现与确认（5 分钟内）
+- [ ] 收到告警
+- [ ] 确认故障范围
+- [ ] 拉起应急会议
+
+### 2. 初步处置（15 分钟内）
+- [ ] 切换到备用服务
+- [ ] 通知客服团队准备话术
+- [ ] 发送用户公告
+
+### 3. 问题定位（30 分钟内）
+- [ ] 收集相关日志
+- [ ] 分析最近变更
+- [ ] 联系阿里云技术支持
+
+### 4. 恢复服务
+- [ ] 执行修复方案
+- [ ] 验证服务恢复
+- [ ] 逐步恢复流量
+
+### 5. 事后复盘
+- [ ] 编写故障报告
+- [ ] 制定改进措施
+- [ ] 更新应急预案
+</code></pre>
+<hr>
+<h2 id="本章小结"><a class="header" href="#本章小结">本章小结</a></h2>
+<p>本章系统讲解了大模型应用的部署与运维：</p>
+<ol>
+<li><strong>容器化部署</strong>：Docker 打包、Compose 编排、Kubernetes 集群管理</li>
+<li><strong>CI/CD 流程</strong>：GitHub Actions 自动化构建、测试、部署</li>
+<li><strong>发布策略</strong>：蓝绿部署、金丝雀发布、自动回滚</li>
+<li><strong>监控告警</strong>：日志收集、指标监控、多级告警通知</li>
+<li><strong>故障排查</strong>：诊断树、命令速查、应急预案</li>
+</ol>
+<p>稳定的运维体系是大模型应用持续服务用户的保障。技术决策者应重视运维能力建设，将 SRE 理念融入日常工作中。</p>
+<hr>
+<h2 id="延伸阅读"><a class="header" href="#延伸阅读">延伸阅读</a></h2>
+<ol>
+<li><a href="https://kubernetes.io/docs/">Kubernetes 官方文档</a></li>
+<li>《Site Reliability Engineering》- Google</li>
+<li><a href="https://prometheus.io/docs/practices/">Prometheus 监控最佳实践</a></li>
+<li>阿里云 ACK 服务文档：https://help.aliyun.com/product/44857.html</li>
+</ol>
+<hr>
+<p><strong>下一章预告</strong>：第 9 章将介绍行业解决方案与实践案例，包括智能客服、企业知识库、代码助手、营销文案生成等典型应用场景的落地经验。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../chapter-07/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../chapter-09/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../chapter-07/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../chapter-09/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

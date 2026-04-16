@@ -1,0 +1,756 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 10 章 大模型应用开发未来趋势 - 云上大模型应用开发实践</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="面向技术决策者的阿里云大模型应用开发指南，涵盖 Agent 与 RAG 实战">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-218f5815.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-46fe4919.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">云上大模型应用开发实践</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-10-章-大模型应用开发未来趋势"><a class="header" href="#第-10-章-大模型应用开发未来趋势">第 10 章 大模型应用开发未来趋势</a></h1>
+<blockquote>
+<p><strong>本章导读</strong></p>
+<p>大模型技术正在快速发展。本章将展望未来的技术演进方向，包括多模态融合、Agent 自主化、边缘部署、隐私计算、具身智能等前沿趋势，帮助技术决策者把握技术发展脉络，提前布局未来竞争力。</p>
+<p><strong>核心议题：</strong></p>
+<ul>
+<li>多模态大模型演进</li>
+<li>Agent 自主化与协作</li>
+<li>边缘计算与端侧部署</li>
+<li>隐私计算与联邦学习</li>
+<li>具身智能与机器人</li>
+<li>可持续发展与绿色 AI</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="101-多模态大模型演进"><a class="header" href="#101-多模态大模型演进">10.1 多模态大模型演进</a></h2>
+<h3 id="1011-从单模态到全模态"><a class="header" href="#1011-从单模态到全模态">10.1.1 从单模态到全模态</a></h3>
+<p>大模型的发展经历了三个阶段：</p>
+<p><strong>阶段一：文本单模态（2018-2022）</strong></p>
+<ul>
+<li>GPT-3、BERT 等纯文本模型</li>
+<li>应用场景：对话、写作、翻译</li>
+<li>局限性：无法理解图像、音频等其他模态</li>
+</ul>
+<p><strong>阶段二：多模态融合（2022-2025）</strong></p>
+<ul>
+<li>GPT-4V、Qwen-VL 等视觉 - 语言模型</li>
+<li>支持图文问答、图像描述</li>
+<li>特点：多个单模态编码器 + 融合层</li>
+</ul>
+<p><strong>阶段三：全模态原生（2025-）</strong></p>
+<ul>
+<li>Qwen3.5-Omni、GPT-4o 等原生多模态模型</li>
+<li>文本、图像、音频、视频统一处理</li>
+<li>特点：单一架构、端到端、实时交互</li>
+</ul>
+<h3 id="1012-技术突破方向"><a class="header" href="#1012-技术突破方向">10.1.2 技术突破方向</a></h3>
+<p><strong>1. 统一表示学习</strong></p>
+<p>传统多模态模型使用独立的编码器处理不同模态，然后在高层融合。未来的方向是学习统一的底层表示：</p>
+<pre><code>统一 Tokenizer → 共享 Transformer → 多模态输出
+     ↓
+[文本] [图像] [音频] [视频] 全部转换为统一的 token 序列
+</code></pre>
+<p><strong>2. 跨模态推理</strong></p>
+<p>从简单的“看图说话“升级到复杂的跨模态推理：</p>
+<pre><code>输入：一段产品演示视频 + 语音讲解
+任务：生成对应的代码实现
+能力要求：
+- 理解视频中的界面布局（视觉）
+- 理解语音中的功能描述（听觉）
+- 推理出交互逻辑（认知）
+- 生成可运行的代码（创造）
+</code></pre>
+<p><strong>3. 实时交互</strong></p>
+<p>从“请求 - 响应“模式升级为实时流式交互：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>特性</th><th>传统模式</th><th>实时交互</th></tr>
+</thead>
+<tbody>
+<tr><td>延迟</td><td>秒级</td><td>亚秒级</td></tr>
+<tr><td>打断</td><td>不支持</td><td>支持自然打断</td></tr>
+<tr><td>多轮</td><td>独立请求</td><td>上下文连续</td></tr>
+<tr><td>情感</td><td>无</td><td>语气、情绪识别</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="1013-应用场景展望"><a class="header" href="#1013-应用场景展望">10.1.3 应用场景展望</a></h3>
+<p><strong>1. 智能会议助手</strong></p>
+<ul>
+<li>实时转录多人对话</li>
+<li>自动区分发言人</li>
+<li>理解讨论内容并生成纪要</li>
+<li>识别行动项并创建待办</li>
+</ul>
+<p><strong>2. 沉浸式教育</strong></p>
+<ul>
+<li>虚拟教师同时讲解和演示</li>
+<li>实时解答学生问题</li>
+<li>根据学生表情调整教学节奏</li>
+<li>生成个性化练习题</li>
+</ul>
+<p><strong>3. 全媒体内容创作</strong></p>
+<ul>
+<li>输入一个创意，自动生成：
+<ul>
+<li>文章</li>
+<li>配图</li>
+<li>短视频</li>
+<li>播客音频</li>
+</ul>
+</li>
+<li>保持风格一致性</li>
+</ul>
+<hr>
+<h2 id="102-agent-自主化与协作"><a class="header" href="#102-agent-自主化与协作">10.2 Agent 自主化与协作</a></h2>
+<h3 id="1021-从工具调用到自主执行"><a class="header" href="#1021-从工具调用到自主执行">10.2.1 从工具调用到自主执行</a></h3>
+<p>当前 Agent 主要是“人在回路“（Human-in-the-loop）模式：</p>
+<pre><code>人类提出任务 → Agent 规划 → 人类确认 → Agent 执行 → 人类验收
+</code></pre>
+<p>未来的发展方向是高度自主：</p>
+<pre><code>人类设定目标 → Agent 自主规划 → 自主执行 → 自主验证 → 汇报结果
+</code></pre>
+<p><strong>自主化程度分级：</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>等级</th><th>名称</th><th>特征</th><th>示例</th></tr>
+</thead>
+<tbody>
+<tr><td>L1</td><td>辅助执行</td><td>人类逐步指令</td><td>“调用这个 API”</td></tr>
+<tr><td>L2</td><td>任务执行</td><td>人类给任务，Agent 执行</td><td>“帮我订机票”</td></tr>
+<tr><td>L3</td><td>条件自主</td><td>特定场景下自主决策</td><td>“出差时自动订票”</td></tr>
+<tr><td>L4</td><td>高度自主</td><td>大部分情况自主，异常请示</td><td>“管理我的日程”</td></tr>
+<tr><td>L5</td><td>完全自主</td><td>完全自主，人类只设目标</td><td>“提升团队效率”</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="1022-多-agent-协作"><a class="header" href="#1022-多-agent-协作">10.2.2 多 Agent 协作</a></h3>
+<p>复杂任务需要多个专业 Agent 协作完成：</p>
+<p><strong>组织模式：</strong></p>
+<pre><code>┌─────────────────────────────────────────┐
+│           协调 Agent (Manager)           │
+│   - 任务分解                            │
+│   - 资源分配                            │
+│   - 进度跟踪                            │
+└──────────────┬──────────────────────────┘
+               │
+    ┌──────────┼──────────┐
+    │          │          │
+┌───▼───┐ ┌───▼───┐ ┌───▼───┐
+│研究   │ │写作   │ │审核   │
+│Agent  │ │Agent  │ │Agent  │
+└───────┘ └───────┘ └───────┘
+</code></pre>
+<p><strong>协作协议：</strong></p>
+<pre><code class="language-python">class AgentCollaboration:
+    def __init__(self):
+        self.agents = {
+            'manager': Agent(role='项目经理'),
+            'researcher': Agent(role='研究员'),
+            'writer': Agent(role='作家'),
+            'reviewer': Agent(role='审核员')
+        }
+    
+    async def complete_task(self, task_description):
+        # 1. Manager 制定计划
+        plan = await self.agents['manager'].plan(task_description)
+        
+        # 2. 并行执行子任务
+        research_result = await self.agents['researcher'].research(plan['research_topics'])
+        
+        # 3. Writer 撰写初稿
+        draft = await self.agents['writer'].write(research_result, plan['outline'])
+        
+        # 4. Reviewer 审核并提出修改意见
+        feedback = await self.agents['reviewer'].review(draft)
+        
+        # 5. 迭代优化
+        if feedback['needs_revision']:
+            revised_draft = await self.agents['writer'].revise(draft, feedback)
+            return revised_draft
+        
+        return draft
+</code></pre>
+<h3 id="1023-agent-经济系统"><a class="header" href="#1023-agent-经济系统">10.2.3 Agent 经济系统</a></h3>
+<p>未来可能出现 Agent 之间的价值交换：</p>
+<ul>
+<li><strong>能力市场</strong>：Agent 可以购买其他 Agent 的服务</li>
+<li><strong>声誉系统</strong>：基于历史表现建立信用评分</li>
+<li><strong>激励机制</strong>：完成任务获得奖励，用于购买服务</li>
+</ul>
+<hr>
+<h2 id="103-边缘计算与端侧部署"><a class="header" href="#103-边缘计算与端侧部署">10.3 边缘计算与端侧部署</a></h2>
+<h3 id="1031-云端-vs-边缘"><a class="header" href="#1031-云端-vs-边缘">10.3.1 云端 vs 边缘</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>云端推理</th><th>边缘推理</th></tr>
+</thead>
+<tbody>
+<tr><td>延迟</td><td>高（网络传输）</td><td>低（本地处理）</td></tr>
+<tr><td>隐私</td><td>数据出域</td><td>数据不出设备</td></tr>
+<tr><td>成本</td><td>按量付费</td><td>一次性硬件投入</td></tr>
+<tr><td>离线</td><td>不可用</td><td>可用</td></tr>
+<tr><td>模型大小</td><td>不限</td><td>受限（&lt;1GB）</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="1032-端侧模型优化"><a class="header" href="#1032-端侧模型优化">10.3.2 端侧模型优化</a></h3>
+<p><strong>1. 模型压缩</strong></p>
+<pre><code>原始模型 (Qwen-7B) → 蒸馏 → 小型模型 (Qwen-1.8B)
+                          ↓
+                    量化 (INT4)
+                          ↓
+                    体积：7GB → 0.5GB
+                    速度：1x → 5x
+</code></pre>
+<p><strong>2. 神经架构搜索（NAS）</strong></p>
+<p>自动搜索适合移动设备的模型架构：</p>
+<pre><code class="language-python"># 伪代码：NAS 搜索过程
+def search_mobile_model(target_latency=50ms, target_accuracy=0.9):
+    search_space = {
+        'num_layers': [6, 8, 12, 16],
+        'hidden_size': [256, 512, 768],
+        'attention_heads': [4, 8, 12],
+        'activation': ['ReLU', 'GELU', 'Swish']
+    }
+    
+    best_model = None
+    best_score = 0
+    
+    for _ in range(1000):
+        # 随机采样架构
+        config = sample_from_search_space(search_space)
+        
+        # 在设备上测量性能
+        latency = measure_latency(config, device='mobile')
+        accuracy = estimate_accuracy(config)
+        
+        # 综合评分
+        score = accuracy if latency &lt;= target_latency else 0
+        
+        if score &gt; best_score:
+            best_score = score
+            best_model = config
+    
+    return best_model
+</code></pre>
+<p><strong>3. 增量更新</strong></p>
+<p>无需重新下载完整模型，仅更新差异部分：</p>
+<pre><code>初始模型：v1.0 (500MB)
+更新包：v1.0 → v1.1 (5MB)
+用户下载更新包，本地合并
+</code></pre>
+<h3 id="1033-混合架构"><a class="header" href="#1033-混合架构">10.3.3 混合架构</a></h3>
+<p>结合云端和边缘的优势：</p>
+<pre><code>简单任务 → 端侧处理（低延迟、保护隐私）
+         ↓
+    复杂度评估
+         ↓
+复杂任务 → 云端处理（强大算力、大模型）
+</code></pre>
+<p><strong>动态路由示例：</strong></p>
+<pre><code class="language-python">def hybrid_inference(user_input):
+    # 端侧小模型先处理
+    local_result = local_model.predict(user_input)
+    
+    # 置信度评估
+    if local_result.confidence &gt; 0.9:
+        return local_result.answer
+    elif local_result.confidence &gt; 0.6:
+        # 中等置信度，云端验证
+        cloud_result = cloud_model.predict(user_input)
+        return cloud_result.answer
+    else:
+        # 低置信度，直接云端处理
+        cloud_result = cloud_model.predict(user_input)
+        return cloud_result.answer
+</code></pre>
+<hr>
+<h2 id="104-隐私计算与联邦学习"><a class="header" href="#104-隐私计算与联邦学习">10.4 隐私计算与联邦学习</a></h2>
+<h3 id="1041-数据隐私挑战"><a class="header" href="#1041-数据隐私挑战">10.4.1 数据隐私挑战</a></h3>
+<p>大模型训练和使用面临隐私挑战：</p>
+<ul>
+<li>训练数据可能包含个人隐私</li>
+<li>用户输入可能泄露敏感信息</li>
+<li>模型可能记忆并泄露训练数据</li>
+</ul>
+<h3 id="1042-联邦学习"><a class="header" href="#1042-联邦学习">10.4.2 联邦学习</a></h3>
+<p><strong>核心理念</strong>：数据不出本地，模型参数聚合更新。</p>
+<pre><code>参与方 A ─┐
+          ├─→ 本地训练 → 上传梯度 ─┐
+参与方 B ─┤                        ├─→ 服务器聚合 → 下发全局模型
+          ├─→ 本地训练 → 上传梯度 ─┤
+参与方 C ─┘                        ┘
+</code></pre>
+<p><strong>应用场景：</strong></p>
+<ul>
+<li><strong>医疗机构协作</strong>：多家医院联合训练诊断模型，患者数据不出院</li>
+<li><strong>金融机构反欺诈</strong>：多家银行共享风控模型，客户信息保密</li>
+<li><strong>输入法优化</strong>：用户打字数据保留在本地，仅上传模型更新</li>
+</ul>
+<h3 id="1043-差分隐私"><a class="header" href="#1043-差分隐私">10.4.3 差分隐私</a></h3>
+<p>在模型训练或推理中添加噪声，保护个体隐私：</p>
+<pre><code class="language-python">def differentially_private_training(data, epsilon=1.0):
+    """
+    带差分隐私的模型训练
+    epsilon 越小，隐私保护越强，但模型效果越差
+    """
+    for batch in data:
+        # 计算梯度
+        gradients = compute_gradients(batch)
+        
+        # 梯度裁剪（限制单个样本的影响）
+        clipped_gradients = clip(gradients, max_norm=1.0)
+        
+        # 添加噪声
+        noise = gaussian_noise(scale=1.0 / epsilon)
+        noisy_gradients = clipped_gradients + noise
+        
+        # 更新模型
+        model.update(noisy_gradients)
+    
+    return model
+</code></pre>
+<h3 id="1044-可信执行环境tee"><a class="header" href="#1044-可信执行环境tee">10.4.4 可信执行环境（TEE）</a></h3>
+<p>使用硬件级别的安全隔离：</p>
+<pre><code>┌─────────────────────────────────────┐
+│           普通执行环境              │
+│  (操作系统、应用程序)                │
+├─────────────────────────────────────┤
+│           可信执行环境 (TEE)        │
+│  ┌─────────────────────────────┐   │
+│  │  加密的模型权重             │   │
+│  │  加密的用户输入             │   │
+│  │  解密 → 推理 → 加密输出     │   │
+│  └─────────────────────────────┘   │
+│  (即使云服务商也无法窥探)            │
+└─────────────────────────────────────┘
+</code></pre>
+<p>阿里云已提供基于 TEE 的机密计算服务，确保数据“可用不可见“。</p>
+<hr>
+<h2 id="105-具身智能与机器人"><a class="header" href="#105-具身智能与机器人">10.5 具身智能与机器人</a></h2>
+<h3 id="1051-从数字世界到物理世界"><a class="header" href="#1051-从数字世界到物理世界">10.5.1 从数字世界到物理世界</a></h3>
+<p>大模型正在从纯数字领域走向物理世界：</p>
+<pre><code>2022-2024: 文本、图像、音频（数字内容）
+    ↓
+2025-2026: 机器人控制、自动驾驶（物理交互）
+    ↓
+2027-: 具身智能（Embodied AI）
+</code></pre>
+<h3 id="1052-核心技术"><a class="header" href="#1052-核心技术">10.5.2 核心技术</a></h3>
+<p><strong>1. 视觉 - 语言 - 动作（VLA）模型</strong></p>
+<pre><code>输入：RGB 图像 + 语言指令
+      ↓
+多模态编码器
+      ↓
+动作解码器
+      ↓
+输出：关节角度、抓取力度等控制信号
+</code></pre>
+<p><strong>2. 世界模型（World Model）</strong></p>
+<p>让 AI 理解物理世界的规律：</p>
+<pre><code>观察：物体 A 在位置 X
+预测：如果施加力 F，物体会移动到位置 Y
+验证：实际执行，观察结果
+学习：更新世界模型
+</code></pre>
+<p><strong>3. 模仿学习 + 强化学习</strong></p>
+<pre><code>阶段 1：模仿人类示范
+       ↓
+学习基本操作技能
+       ↓
+阶段 2：强化学习自我改进
+       ↓
+超越人类水平
+</code></pre>
+<h3 id="1053-应用场景"><a class="header" href="#1053-应用场景">10.5.3 应用场景</a></h3>
+<p><strong>1. 家庭服务机器人</strong></p>
+<ul>
+<li>理解自然语言指令：“把客厅桌子上的水杯拿到厨房”</li>
+<li>视觉识别物体和场景</li>
+<li>路径规划和避障</li>
+<li>精细操作（抓取易碎物品）</li>
+</ul>
+<p><strong>2. 工业制造</strong></p>
+<ul>
+<li>柔性装配线适应多品种小批量</li>
+<li>质检：识别微小缺陷</li>
+<li>预测性维护</li>
+</ul>
+<p><strong>3. 医疗护理</strong></p>
+<ul>
+<li>手术辅助机器人</li>
+<li>康复训练指导</li>
+<li>老年照护</li>
+</ul>
+<hr>
+<h2 id="106-可持续发展与绿色-ai"><a class="header" href="#106-可持续发展与绿色-ai">10.6 可持续发展与绿色 AI</a></h2>
+<h3 id="1061-ai-的碳足迹"><a class="header" href="#1061-ai-的碳足迹">10.6.1 AI 的碳足迹</a></h3>
+<p>大模型的能耗问题日益突出：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>模型</th><th>训练能耗（MWh）</th><th>碳排放（吨 CO₂）</th></tr>
+</thead>
+<tbody>
+<tr><td>GPT-3</td><td>1,287</td><td>552</td></tr>
+<tr><td>Qwen-Max</td><td>~500</td><td>~215</td></tr>
+<tr><td>一次完整推理</td><td>0.001 kWh</td><td>0.0004 kg</td></tr>
+</tbody>
+</table>
+</div>
+<p>随着应用规模扩大，推理阶段的能耗远超训练：</p>
+<pre><code>训练能耗：一次性投入
+推理能耗：每次调用都消耗
+年推理量：10 亿次 +
+年推理能耗 &gt;&gt; 训练能耗
+</code></pre>
+<h3 id="1062-绿色-ai-策略"><a class="header" href="#1062-绿色-ai-策略">10.6.2 绿色 AI 策略</a></h3>
+<p><strong>1. 高效模型架构</strong></p>
+<ul>
+<li>MoE（Mixture of Experts）：每次只激活部分参数</li>
+<li>稀疏注意力：减少计算量</li>
+<li>早期退出：简单样本提前结束推理</li>
+</ul>
+<p><strong>2. 智能调度</strong></p>
+<pre><code class="language-python">def green_inference(request):
+    # 根据电网负荷选择执行时间
+    if is_peak_hours():
+        if request.can_delay():
+            schedule_for_off_peak(request)
+            return "已安排在低谷时段执行"
+    
+    # 根据地域选择执行地点
+    region = find_region_with_most_renewable_energy()
+    return execute_in_region(request, region)
+</code></pre>
+<p><strong>3. 模型共享</strong></p>
+<ul>
+<li>多个应用共享同一个基础模型</li>
+<li>减少重复训练和部署</li>
+<li>云平台提供模型即服务（MaaS）</li>
+</ul>
+<h3 id="1063-企业责任"><a class="header" href="#1063-企业责任">10.6.3 企业责任</a></h3>
+<p>技术决策者应考虑：</p>
+<ol>
+<li><strong>碳核算</strong>：追踪 AI 应用的碳排放</li>
+<li><strong>绿色采购</strong>：优先选择使用可再生能源的云服务商</li>
+<li><strong>效率优化</strong>：持续优化模型效率，减少不必要调用</li>
+<li><strong>透明披露</strong>：向利益相关方披露 AI 环境影响</li>
+</ol>
+<hr>
+<h2 id="107-技术决策者的应对策略"><a class="header" href="#107-技术决策者的应对策略">10.7 技术决策者的应对策略</a></h2>
+<h3 id="1071-短期1-年内"><a class="header" href="#1071-短期1-年内">10.7.1 短期（1 年内）</a></h3>
+<ul>
+<li>✅ 掌握现有大模型技术，构建落地应用</li>
+<li>✅ 建立数据基础设施，积累高质量数据</li>
+<li>✅ 培养团队的 AI 工程能力</li>
+<li>✅ 探索 RAG、Agent 等成熟技术</li>
+</ul>
+<h3 id="1072-中期1-3-年"><a class="header" href="#1072-中期1-3-年">10.7.2 中期（1-3 年）</a></h3>
+<ul>
+<li>🔭 跟踪多模态、边缘部署等技术进展</li>
+<li>🔭 试点端云混合架构</li>
+<li>🔭 建立 Agent 协作框架</li>
+<li>🔭 参与行业标准和生态建设</li>
+</ul>
+<h3 id="1073-长期3-5-年"><a class="header" href="#1073-长期3-5-年">10.7.3 长期（3-5 年）</a></h3>
+<ul>
+<li>🚀 布局具身智能和机器人应用</li>
+<li>🚀 投资隐私计算和联邦学习</li>
+<li>🚀 构建可持续的 AI 战略</li>
+<li>🚀 培养跨学科人才队伍</li>
+</ul>
+<hr>
+<h2 id="本章小结"><a class="header" href="#本章小结">本章小结</a></h2>
+<p>本章展望了大模型应用开发的未来趋势：</p>
+<ol>
+<li><strong>多模态融合</strong>：从文本走向全模态，实现真正的感知 - 认知 - 行动闭环</li>
+<li><strong>Agent 自主化</strong>：从辅助执行走向高度自主，多 Agent 协作成为常态</li>
+<li><strong>边缘部署</strong>：端侧模型性能提升，混合架构平衡性能与隐私</li>
+<li><strong>隐私计算</strong>：联邦学习、差分隐私、TEE 等技术保障数据安全</li>
+<li><strong>具身智能</strong>：大模型赋能机器人，从数字世界走向物理世界</li>
+<li><strong>绿色 AI</strong>：关注碳排放，推动可持续发展</li>
+</ol>
+<p>技术变革的速度超出想象。技术决策者既要拥抱变化，也要保持战略定力，在不确定性中找到确定的方向。</p>
+<hr>
+<h2 id="结语"><a class="header" href="#结语">结语</a></h2>
+<p>感谢你阅读完这本书。</p>
+<p>大模型技术正在重塑软件开发的范式。作为技术决策者，你站在这一变革的前沿。</p>
+<p>本书从基础概念讲起，涵盖了阿里云百炼平台的使用、RAG 和 Agent 开发、安全合规、性能优化、部署运维等实践知识，并展望了未来趋势。</p>
+<p>但技术只是工具，真正的价值在于解决业务问题。希望你能将书中的知识与自身业务相结合，创造出真正有价值的 AI 应用。</p>
+<p>最后，记住三点：</p>
+<ol>
+<li><strong>保持学习</strong>：这个领域变化太快，持续学习是唯一选择</li>
+<li><strong>务实落地</strong>：从实际问题出发，避免为 AI 而 AI</li>
+<li><strong>承担责任</strong>：技术的力量越大，责任也越大</li>
+</ol>
+<p>祝你在 AI 时代的征途中取得成功！</p>
+<hr>
+<h2 id="附录-a-术语表"><a class="header" href="#附录-a-术语表">附录 A 术语表</a></h2>
+<p>详见 <code>glossary.md</code></p>
+<hr>
+<h2 id="附录-b-参考文献"><a class="header" href="#附录-b-参考文献">附录 B 参考文献</a></h2>
+<ol>
+<li>《Attention Is All You Need》- Vaswani et al. (2017)</li>
+<li>《Language Models are Few-Shot Learners》- Brown et al. (2020)</li>
+<li>《Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks》- Lewis et al. (2020)</li>
+<li>《ReAct: Synergizing Reasoning and Acting in Language Models》- Yao et al. (2022)</li>
+<li>阿里云百炼官方文档：https://help.aliyun.com/zh/model-studio/</li>
+<li>通义千问技术报告：https://qwenlm.github.io/</li>
+</ol>
+<hr>
+<h2 id="附录-c-代码示例索引"><a class="header" href="#附录-c-代码示例索引">附录 C 代码示例索引</a></h2>
+<p>所有代码示例可在 GitHub 仓库获取：
+https://github.com/your-username/cloud-llm-book-examples</p>
+<hr>
+<h2 id="附录-d-学习资源"><a class="header" href="#附录-d-学习资源">附录 D 学习资源</a></h2>
+<p><strong>在线课程：</strong></p>
+<ul>
+<li>吴恩达《AI For Everyone》</li>
+<li>李宏毅《机器学习》</li>
+<li>Hugging Face NLP Course</li>
+</ul>
+<p><strong>技术社区：</strong></p>
+<ul>
+<li>阿里云开发者社区</li>
+<li>Hugging Face 论坛</li>
+<li>LangChain 中文社区</li>
+</ul>
+<p><strong>书籍推荐：</strong></p>
+<ul>
+<li>《深度学习》- Goodfellow et al.</li>
+<li>《自然语言处理综论》- Jurafsky &amp; Martin</li>
+<li>《人工智能：一种现代方法》- Russell &amp; Norvig</li>
+</ul>
+<hr>
+<p><strong>全书完</strong></p>
+<p>感谢您完成《云上大模型应用开发实践》的阅读！</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../chapter-09/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../glossary.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../chapter-09/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../glossary.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
