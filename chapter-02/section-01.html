@@ -1,0 +1,673 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>2.1 GPU/NPU 计算资源 - 云上大模型应用开发实践</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="面向技术决策者的阿里云大模型应用开发指南，涵盖 Agent 与 RAG 实战">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-218f5815.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-46fe4919.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">云上大模型应用开发实践</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="21-阿里云-gpunpu-计算资源"><a class="header" href="#21-阿里云-gpunpu-计算资源">2.1 阿里云 GPU/NPU 计算资源</a></h1>
+<h2 id="场景引入"><a class="header" href="#场景引入">场景引入</a></h2>
+<p>某金融科技公司计划在阿里云上部署一个经过微调的风控大模型，用于实时交易风险评估。模型参数量约 7B（70 亿），需要在 50ms 内完成推理。技术团队面临的核心问题是：选择什么样的 GPU 实例？按量付费还是预留？如何确保推理服务的高可用？</p>
+<p>这个问题背后，是每一个大模型应用开发者都会遇到的“基础设施选型“挑战。本章将系统地解答这些问题。</p>
+<hr>
+<h2 id="211-gpu-实例选型指南"><a class="header" href="#211-gpu-实例选型指南">2.1.1 GPU 实例选型指南</a></h2>
+<h3 id="理解-gpu-的关键参数"><a class="header" href="#理解-gpu-的关键参数">理解 GPU 的关键参数</a></h3>
+<p>在选择 GPU 实例之前，技术决策者需要理解以下核心指标：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>参数</th><th>含义</th><th>对大模型的意义</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>显存 (VRAM)</strong></td><td>GPU 板载内存</td><td>决定能加载的模型大小，7B FP16 模型约需 14GB</td></tr>
+<tr><td><strong>算力 (TFLOPS)</strong></td><td>每秒浮点运算次数</td><td>影响推理速度，TF32 精度下 A100 约 312 TFLOPS</td></tr>
+<tr><td><strong>显存带宽</strong></td><td>数据传输速率</td><td>影响 Prefill 阶段的速度，A100 约 2TB/s</td></tr>
+<tr><td><strong>互联带宽</strong></td><td>多卡间通信速率</td><td>多卡并行训练/推理的关键，NVLink 可达 600GB/s</td></tr>
+<tr><td><strong>功耗 (TDP)</strong></td><td>最大功率消耗</td><td>影响散热和电力成本</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="阿里云-ecs-gpu-实例族"><a class="header" href="#阿里云-ecs-gpu-实例族">阿里云 ECS GPU 实例族</a></h3>
+<p>阿里云提供多种 GPU 实例族，覆盖不同的大模型应用场景：</p>
+<p><strong>1. GN 系列（NVIDIA A100/H800）—— 旗舰级</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>实例规格</th><th>GPU 型号</th><th>GPU 数量</th><th>显存</th><th>适用场景</th></tr>
+</thead>
+<tbody>
+<tr><td>ecs.gn7-c12g1.3xlarge</td><td>A100 40GB</td><td>1</td><td>40GB</td><td>小模型推理（≤7B）</td></tr>
+<tr><td>ecs.gn7-c12g1.6xlarge</td><td>A100 40GB</td><td>2</td><td>80GB</td><td>中等模型推理/微调（7B-14B）</td></tr>
+<tr><td>ecs.gn7-c12g1.12xlarge</td><td>A100 40GB</td><td>4</td><td>160GB</td><td>大模型训练/推理（14B-72B）</td></tr>
+<tr><td>ecs.gn7e-c12g1.24xlarge</td><td>A100 80GB</td><td>8</td><td>640GB</td><td>超大模型训练（70B+）</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>2. GM 系列（NVIDIA H800/H20）—— 新一代</strong></p>
+<p>H800 是 A100 的升级版，采用 Hopper 架构，在推理场景下性能提升 2-4 倍：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>实例规格</th><th>GPU 型号</th><th>GPU 数量</th><th>显存</th><th>适用场景</th></tr>
+</thead>
+<tbody>
+<tr><td>ecs.gm7-c12g1.3xlarge</td><td>H800 80GB</td><td>1</td><td>80GB</td><td>高性能推理</td></tr>
+<tr><td>ecs.gm7-c12g1.6xlarge</td><td>H800 80GB</td><td>2</td><td>160GB</td><td>模型微调</td></tr>
+<tr><td>ecs.gm7-c12g1.12xlarge</td><td>H800 80GB</td><td>4</td><td>320GB</td><td>大规模训练</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>3. VGN 系列（NVIDIA L40s）—— 性价比之选</strong></p>
+<p>L40s 是 Ada Lovelace 架构的推理优化卡，性价比极高：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>实例规格</th><th>GPU 型号</th><th>GPU 数量</th><th>显存</th><th>适用场景</th></tr>
+</thead>
+<tbody>
+<tr><td>ecs.vgn7i-vni4</td><td>L40s 48GB</td><td>1</td><td>48GB</td><td>高性价比推理</td></tr>
+<tr><td>ecs.vgn7i-vni8</td><td>L40s 48GB</td><td>2</td><td>96GB</td><td>多模型并发推理</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="选型决策矩阵"><a class="header" href="#选型决策矩阵">选型决策矩阵</a></h3>
+<p>根据不同的应用场景，推荐以下选型方案：</p>
+<pre><code>应用场景                    推荐实例               月成本参考
+─────────────────────────────────────────────────────────
+≤7B 模型推理（低频）       vgn7i-vni4 (L40s)      ¥3,000-5,000
+≤7B 模型推理（高频）       gn7-c12g1.3xlarge      ¥5,000-8,000
+7B-14B 模型微调            gn7-c12g1.6xlarge      ¥15,000-25,000
+14B-72B 模型推理           gn7-c12g1.12xlarge     ¥30,000-50,000
+70B+ 模型训练              gm7-c12g1.12xlarge      ¥80,000-150,000
+多模态模型（音视频）       gm7-c12g1.6xlarge       ¥40,000-70,000
+</code></pre>
+<p><strong>选型黄金法则：</strong></p>
+<ol>
+<li><strong>推理优先选 L40s</strong>：相同显存下，L40s 价格比 A100 低 40-60%，推理性能相当</li>
+<li><strong>训练优先选 A100/H800</strong>：NVLink 互联和多卡扩展性更好</li>
+<li><strong>显存是硬约束</strong>：模型大小决定了 GPU 显存下限，算力可以降低但显存不能少</li>
+<li><strong>预留实例降成本</strong>：长期稳定负载（&gt;3 个月）用预留实例，可节省 30-50%</li>
+</ol>
+<blockquote>
+<p><strong>常见陷阱</strong>：很多团队只关注 GPU 算力，忽略了显存带宽。对于大模型推理，显存带宽往往是瓶颈而非算力。A100 的 2TB/s 显存带宽是其推理性能优异的关键原因。</p>
+</blockquote>
+<hr>
+<h2 id="212-弹性容器实例-eci-与大模型部署"><a class="header" href="#212-弹性容器实例-eci-与大模型部署">2.1.2 弹性容器实例 ECI 与大模型部署</a></h2>
+<h3 id="eci-简介"><a class="header" href="#eci-简介">ECI 简介</a></h3>
+<p>弹性容器实例（Elastic Container Instance，ECI）是阿里云提供的 Serverless 容器服务。对于大模型应用，ECI 提供了以下优势：</p>
+<ul>
+<li><strong>无需管理节点</strong>：无需购买和维护 ECS 实例</li>
+<li><strong>按秒计费</strong>：精确到秒的计费粒度</li>
+<li><strong>自动弹性</strong>：根据负载自动扩缩容</li>
+<li><strong>兼容 Kubernetes</strong>：完全兼容 K8s API</li>
+</ul>
+<h3 id="gpu-加速的-eci"><a class="header" href="#gpu-加速的-eci">GPU 加速的 ECI</a></h3>
+<p>阿里云 ECI 支持指定 GPU 类型来创建容器组：</p>
+<pre><code class="language-python"># 使用 ECI SDK 创建 GPU 容器实例
+from alibabacloud_eci20180808.client import Client
+from alibabacloud_eci20180808.models import CreateContainerGroupRequest
+
+client = Client(
+    access_key_id=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+    access_key_secret=os.getenv('ALIBABA_CLOUD_ACCESS_KEY_SECRET'),
+    endpoint='eci.cn-beijing.aliyuncs.com'
+)
+
+request = CreateContainerGroupRequest(
+    region_id='cn-beijing',
+    container_group_name='llm-inference',
+    security_group_id='sg-xxxxxxxx',
+    v_switch_id='vsw-xxxxxxxx',
+    # 指定 GPU 规格
+    instance_type='eci.gn7i-c12g1.3xlarge',
+    containers=[
+        {
+            'name': 'llm-app',
+            'image': 'registry.cn-beijing.aliyuncs.com/your-ns/llm-inference:v1',
+            'cpu': 4,
+            'memory': 16.0,
+            'gpu': 1,  # 请求 1 块 GPU
+            'ports': [{'port': 8000, 'protocol': 'TCP'}],
+            'environment_vars': [
+                {'key': 'MODEL_NAME', 'value': 'qwen-7b'},
+                {'key': 'DASHSCOPE_API_KEY', 'value': os.getenv('DASHSCOPE_API_KEY')}
+            ]
+        }
+    ]
+)
+
+response = client.create_container_group(request)
+print(f"容器组 ID: {response.body.container_group_id}")
+</code></pre>
+<h3 id="eci-适用场景"><a class="header" href="#eci-适用场景">ECI 适用场景</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>场景</th><th>推荐度</th><th>原因</th></tr>
+</thead>
+<tbody>
+<tr><td>API 调用型推理（使用百炼/DashScope）</td><td>★★★★★</td><td>无需 GPU，ECI 完美匹配</td></tr>
+<tr><td>自部署轻量模型（≤7B）</td><td>★★★★☆</td><td>灵活弹性，成本可控</td></tr>
+<tr><td>大规模并发推理</td><td>★★★☆☆</td><td>单容器能力有限，需配合 K8s</td></tr>
+<tr><td>模型训练</td><td>★★☆☆☆</td><td>训练时间长，成本不如预留实例</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="213-pai-平台一站式模型训练与部署"><a class="header" href="#213-pai-平台一站式模型训练与部署">2.1.3 PAI 平台：一站式模型训练与部署</a></h2>
+<h3 id="pai-平台概述"><a class="header" href="#pai-平台概述">PAI 平台概述</a></h3>
+<p>阿里云 PAI（Platform of Artificial Intelligence）是面向企业的一站式机器学习平台，覆盖模型开发、训练、部署、管理的全生命周期。对于大模型场景，PAI 提供了以下核心能力：</p>
+<pre><code>┌──────────────────────────────────────────────┐
+│                PAI 平台架构                   │
+├──────────────────────────────────────────────┤
+│  PAI-Studio     │  交互式开发环境（Notebook）  │
+│  PAI-DSW        │  深度学习工作站（GPU 实例）  │
+│  PAI-DLC        │  分布式训练（多机多卡）      │
+│  PAI-EAS        │  模型在线服务（推理部署）     │
+│  PAI-FeatureStore │  特征管理平台              │
+└──────────────────────────────────────────────┘
+</code></pre>
+<h3 id="pai-dsw交互式模型开发"><a class="header" href="#pai-dsw交互式模型开发">PAI-DSW：交互式模型开发</a></h3>
+<p>DSW（Deep Learning Workshop）提供预配置的 Jupyter Notebook 环境，支持一键启动 GPU 实例：</p>
+<pre><code class="language-python"># 在 PAI-DSW 中使用通义千问进行模型微调
+from modelscope import AutoModel, AutoTokenizer
+import torch
+
+# 加载预训练模型
+model_name = "qwen/Qwen2.5-7B-Instruct"
+tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+model = AutoModel.from_pretrained(
+    model_name,
+    trust_remote_code=True,
+    torch_dtype=torch.bfloat16,
+    device_map="auto"
+)
+
+# 查看 GPU 使用情况
+print(f"模型显存占用: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
+print(f"GPU 型号: {torch.cuda.get_device_name(0)}")
+</code></pre>
+<h3 id="pai-dlc分布式模型训练"><a class="header" href="#pai-dlc分布式模型训练">PAI-DLC：分布式模型训练</a></h3>
+<p>对于大规模模型训练（如全量微调 72B 模型），PAI-DLC 提供了多机多卡的分布式训练能力：</p>
+<pre><code class="language-yaml"># PAI-DLC 训练任务配置
+apiVersion: "pai.alibabacloud.com/v1alpha1"
+kind: "PyTorchJob"
+metadata:
+  name: "qwen-finetune"
+spec:
+  pytorchReplicaSpecs:
+    Worker:
+      replicas: 4  # 4 个训练节点
+      template:
+        spec:
+          containers:
+          - name: pytorch
+            image: registry.cn-beijing.aliyuncs.com/pai/llm-train:latest
+            resources:
+              limits:
+                nvidia.com/gpu: 8  # 每节点 8 卡
+            command:
+            - python
+            - -m
+            - torch.distributed.launch
+            - --nproc_per_node=8
+            - --nnodes=4
+            - finetune.py
+            - --model_name=qwen/Qwen2.5-7B
+            - --data_path=oss://my-bucket/training-data/
+            - --output_path=oss://my-bucket/output/
+</code></pre>
+<h3 id="pai-eas模型在线部署"><a class="header" href="#pai-eas模型在线部署">PAI-EAS：模型在线部署</a></h3>
+<p>将训练好的模型部署为在线推理服务：</p>
+<pre><code class="language-python"># PAI-EAS 部署大模型推理服务
+from alibabacloud_pai_eas20230131.client import Client
+from alibabacloud_pai_eas20230131.models import CreateServiceRequest
+
+client = Client(access_key_id='xxx', access_key_secret='xxx')
+
+# 创建推理服务
+request = CreateServiceRequest(
+    service_name='qwen-7b-finetuned',
+    service_config='''
+    {
+        "metadata": {
+            "instance": 2,
+            "resource": "ecs.gn7i-c12g1.3xlarge"
+        },
+        "containers": [{
+            "image": "registry.cn-beijing.aliyuncs.com/pai/llm-inference:vllm",
+            "port": 8000,
+            "env": [{
+                "name": "MODEL_PATH",
+                "value": "oss://my-bucket/models/qwen-7b-finetuned"
+            }]
+        }]
+    }
+    '''
+)
+
+response = client.create_service(request)
+print(f"推理服务地址: {response.body.service_url}")
+</code></pre>
+<blockquote>
+<p><strong>最佳实践</strong>：对于大多数企业，建议使用 PAI-EAS 部署自训练模型，而不是直接在 ECS 上搭建推理服务。PAI-EAS 内置了模型优化、自动扩缩容、灰度发布等企业级功能，可以大幅降低运维复杂度。</p>
+</blockquote>
+<hr>
+<h2 id="214-gpu-池化与百炼平台调度"><a class="header" href="#214-gpu-池化与百炼平台调度">2.1.4 GPU 池化与百炼平台调度</a></h2>
+<h3 id="传统-gpu-调度的痛点"><a class="header" href="#传统-gpu-调度的痛点">传统 GPU 调度的痛点</a></h3>
+<p>在传统模式下，GPU 资源以整卡为单位分配给特定模型，存在严重浪费：</p>
+<pre><code>场景：3 个模型部署在 3 张 A100 上
+
+模型 A（Qwen-7B 推理）  → 占用 GPU #1，利用率 25%
+模型 B（Embedding）      → 占用 GPU #2，利用率 15%
+模型 C（图像理解）        → 占用 GPU #3，利用率 35%
+
+总体 GPU 利用率：25% → 巨大的资源浪费！
+</code></pre>
+<h3 id="百炼平台的-gpu-池化技术"><a class="header" href="#百炼平台的-gpu-池化技术">百炼平台的 GPU 池化技术</a></h3>
+<p>阿里云百炼平台通过 GPU 池化技术解决了这个问题。其核心技术论文《Aegaeon: Token-Level GPU Scheduling for Multi-Model Inference》发表于 SOSP 2025，代表了大模型基础设施领域的前沿水平。</p>
+<p><strong>工作原理：</strong></p>
+<pre><code>传统模式（独占）：
+  GPU #1 → 模型 A（独占）
+  GPU #2 → 模型 B（独占）
+  GPU #3 → 模型 C（独占）
+
+GPU 池化模式（共享）：
+  GPU Pool = [GPU #1, GPU #2, GPU #3]
+       ↓
+  Token 级调度器
+       ↓
+  请求 A 的 token → GPU #1
+  请求 B 的 token → GPU #2
+  请求 A 的 token → GPU #3  （同一请求的不同 token 可分布在不同 GPU）
+</code></pre>
+<p><strong>性能提升：</strong></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>指标</th><th>传统独占模式</th><th>GPU 池化模式</th><th>提升</th></tr>
+</thead>
+<tbody>
+<tr><td>GPU 平均利用率</td><td>30%</td><td>75%+</td><td>2.5x</td></tr>
+<tr><td>单卡并发请求数</td><td>5-10</td><td>20-50</td><td>5x</td></tr>
+<tr><td>推理延迟 P99</td><td>500ms</td><td>&lt;200ms</td><td>2.5x</td></tr>
+<tr><td>单位 token 成本</td><td>基准</td><td>-60%</td><td>显著降低</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="对技术决策者的启示"><a class="header" href="#对技术决策者的启示">对技术决策者的启示</a></h3>
+<p>GPU 池化技术的意义在于：</p>
+<ol>
+<li><strong>降低推理成本</strong>：相同硬件资源可服务更多用户</li>
+<li><strong>提升用户体验</strong>：更低的延迟和更高的可用性</li>
+<li><strong>简化运维</strong>：无需手动分配和调优 GPU 资源</li>
+</ol>
+<blockquote>
+<p><strong>决策建议</strong>：如果你的企业需要同时运行多个大模型（对话、Embedding、图像理解等），强烈建议使用百炼平台的 API 服务，而不是自建 GPU 集群。GPU 池化带来的成本优势在规模化场景下非常显著。</p>
+</blockquote>
+<hr>
+<h2 id="215-预留实例与-spot-实例策略"><a class="header" href="#215-预留实例与-spot-实例策略">2.1.5 预留实例与 Spot 实例策略</a></h2>
+<h3 id="三种计费模式对比"><a class="header" href="#三种计费模式对比">三种计费模式对比</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>计费模式</th><th>价格</th><th>适用场景</th><th>灵活性</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>按量付费</strong></td><td>原价</td><td>开发测试、突发流量</td><td>最高</td></tr>
+<tr><td><strong>预留实例</strong></td><td>原价的 50-70%</td><td>长期稳定负载（&gt;3月）</td><td>中等</td></tr>
+<tr><td><strong>Spot 实例</strong></td><td>原价的 10-30%</td><td>可中断的离线任务</td><td>最低</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="预留实例策略"><a class="header" href="#预留实例策略">预留实例策略</a></h3>
+<p>预留实例（Reserved Instance）适合 7×24 小时运行的推理服务：</p>
+<pre><code class="language-python"># 使用阿里云 SDK 查询预留实例价格
+from alibabacloud_ecs20140526.client import Client
+from alibabacloud_ecs20140526.models import DescribeReservedInstancesRequest
+
+client = Client(access_key_id='xxx', access_key_secret='xxx')
+
+# 查询 A100 预留实例价格
+response = client.describe_reserved_instances(
+    DescribeReservedInstancesRequest(
+        region_id='cn-beijing',
+        instance_type='ecs.gn7-c12g1.3xlarge',
+        scope='Region',
+        offering_type='All Upfront',  # 全预付（最便宜）
+        reserved_instance_offering_type='No Upfront'  # 无预付
+    )
+)
+
+# 成本对比计算
+hourly_ondemand = 28.5  # 按量 ¥28.5/小时
+hourly_reserved = 14.0  # 预留 ¥14.0/小时
+monthly_savings = (hourly_ondemand - hourly_reserved) * 24 * 30
+print(f"预留实例月节省：¥{monthly_savings:,.0f}")
+</code></pre>
+<h3 id="spot-实例策略"><a class="header" href="#spot-实例策略">Spot 实例策略</a></h3>
+<p>Spot 实例价格极低，但可能被系统随时回收。适合以下场景：</p>
+<p><strong>适合 Spot 的场景：</strong></p>
+<ul>
+<li>模型训练（可设置 Checkpoint，中断后恢复）</li>
+<li>离线批量推理（文档 Embedding、数据标注）</li>
+<li>开发环境（Jupyter Notebook）</li>
+</ul>
+<p><strong>不适合 Spot 的场景：</strong></p>
+<ul>
+<li>在线推理服务（不能中断）</li>
+<li>实时风控（延迟敏感）</li>
+</ul>
+<pre><code class="language-python"># Spot 实例训练脚本（带 Checkpoint）
+import torch
+import os
+from datetime import datetime
+
+class SpotAwareTrainer:
+    """支持 Spot 实例中断恢复的训练器"""
+
+    def __init__(self, model, optimizer, checkpoint_dir='checkpoints'):
+        self.model = model
+        self.optimizer = optimizer
+        self.checkpoint_dir = checkpoint_dir
+        os.makedirs(checkpoint_dir, exist_ok=True)
+
+    def save_checkpoint(self, step):
+        """保存 Checkpoint"""
+        checkpoint = {
+            'step': step,
+            'model_state_dict': self.model.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict(),
+            'timestamp': datetime.now().isoformat()
+        }
+        path = f"{self.checkpoint_dir}/step_{step}.pt"
+        torch.save(checkpoint, path)
+        print(f"Checkpoint 已保存: {path}")
+
+    def load_latest_checkpoint(self):
+        """加载最新 Checkpoint"""
+        if not os.path.exists(self.checkpoint_dir):
+            return 0
+
+        checkpoints = [f for f in os.listdir(self.checkpoint_dir) if f.endswith('.pt')]
+        if not checkpoints:
+            return 0
+
+        latest = max(checkpoints, key=lambda x: int(x.split('_')[1].split('.')[0]))
+        checkpoint = torch.load(f"{self.checkpoint_dir}/{latest}")
+        self.model.load_state_dict(checkpoint['model_state_dict'])
+        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        print(f"从 {latest} 恢复训练 (保存于 {checkpoint['timestamp']})")
+        return checkpoint['step']
+
+    def train_with_spot_handling(self, train_fn, max_steps=10000, save_interval=500):
+        """带 Spot 中断处理的训练"""
+        try:
+            start_step = self.load_latest_checkpoint()
+
+            for step in range(start_step, max_steps):
+                train_fn(step)
+
+                # 定期保存 Checkpoint
+                if (step + 1) % save_interval == 0:
+                    self.save_checkpoint(step + 1)
+
+        except Exception as e:
+            # Spot 实例被回收时，触发中断信号
+            print(f"训练中断: {e}")
+            self.save_checkpoint(step)  # 紧急保存
+            raise
+
+# 使用示例
+trainer = SpotAwareTrainer(model, optimizer)
+trainer.train_with_spot_handling(
+    train_fn=lambda step: train_step(model, optimizer, dataloader),
+    max_steps=50000,
+    save_interval=1000
+)
+</code></pre>
+<h3 id="混合策略推荐"><a class="header" href="#混合策略推荐">混合策略推荐</a></h3>
+<p>对于大多数大模型应用团队，推荐以下混合策略：</p>
+<pre><code>生产推理服务（7×24）  → 预留实例（70% 基础负载）+ 按量付费（30% 弹性）
+模型微调训练          → Spot 实例（成本最低，可中断恢复）
+开发测试环境          → Spot 实例 或 PAI-DSW（按量计费）
+数据处理/Embedding    → Spot 实例（离线批处理，不要求实时）
+</code></pre>
+<hr>
+<h2 id="本节小结"><a class="header" href="#本节小结">本节小结</a></h2>
+<p>本节系统介绍了阿里云的 GPU/NPU 计算资源体系：</p>
+<ol>
+<li><strong>实例选型</strong>：根据模型大小和应用场景，在 A100、H800、L40s 之间做出最优选择</li>
+<li><strong>ECI 部署</strong>：Serverless 容器化方案，适合 API 调用型推理和轻量模型部署</li>
+<li><strong>PAI 平台</strong>：一站式模型开发、训练、部署平台，降低运维复杂度</li>
+<li><strong>GPU 池化</strong>：百炼平台的 Token 级调度技术，大幅提升资源利用率</li>
+<li><strong>成本策略</strong>：预留实例 + Spot 实例 + 按量付费的混合策略，在稳定性和成本之间取得平衡</li>
+</ol>
+<p>技术决策者在选择计算资源时，应遵循“先评估、再预留、Spot 补充“的原则，避免过度采购或资源不足。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../chapter-02/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../chapter-02/section-02.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../chapter-02/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../chapter-02/section-02.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

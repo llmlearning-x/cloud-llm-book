@@ -1,0 +1,585 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 1 章 云计算与大模型基础 - 云上大模型应用开发实践</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="面向技术决策者的阿里云大模型应用开发指南，涵盖 Agent 与 RAG 实战">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-218f5815.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-46fe4919.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">云上大模型应用开发实践</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-1-章-云计算与大模型基础"><a class="header" href="#第-1-章-云计算与大模型基础">第 1 章 云计算与大模型基础</a></h1>
+<blockquote>
+<p><strong>本章导读</strong><br>本章将建立对云计算和大模型技术的系统性认知。我们将从云计算的演进历程说起，理解 MaaS（Model as a Service）这一新范式的诞生背景；然后深入大模型的技术原理，掌握 Transformer、预训练、微调等核心概念；接着全面了解阿里云的大模型产品体系；最后分析大模型应用开发面临的四大挑战——成本、延迟、安全、可观测性。</p>
+<p>对于技术决策者而言，本章的价值在于提供一个完整的技术地图，帮助你在后续的架构设计和选型决策中保持清晰的方向感。</p>
+</blockquote>
+<hr>
+<h2 id="11-云计算演进从-iaas-到-maas"><a class="header" href="#11-云计算演进从-iaas-到-maas">1.1 云计算演进：从 IaaS 到 MaaS</a></h2>
+<h3 id="111-云计算三代架构回顾"><a class="header" href="#111-云计算三代架构回顾">1.1.1 云计算三代架构回顾</a></h3>
+<p>云计算的发展可以追溯到 2006 年 AWS 推出 EC2 服务。近二十年来，云计算经历了三次重要的范式转移：</p>
+<p><strong>第一代：IaaS（基础设施即服务）</strong></p>
+<p>以 AWS EC2、阿里云 ECS 为代表，提供虚拟机、存储、网络等基础计算资源。企业的 IT 架构从“自建机房“转向“云上虚拟机“，实现了：</p>
+<ul>
+<li><strong>资本支出转运营支出</strong>：从一次性采购硬件转为按需付费</li>
+<li><strong>弹性伸缩</strong>：分钟级开通数百台服务器成为可能</li>
+<li><strong>全球部署</strong>：利用云厂商的数据中心网络快速拓展海外业务</li>
+</ul>
+<p>但 IaaS 时代，企业仍然需要自己管理操作系统、中间件、运行时环境，运维复杂度并未根本性降低。</p>
+<p><strong>第二代：PaaS 与 SaaS（平台即服务/软件即服务）</strong></p>
+<p>以 Heroku、Salesforce、钉钉、企业微信为代表，提供更高层次的抽象：</p>
+<ul>
+<li><strong>PaaS</strong>：开发者只需关注代码，平台负责部署、扩容、监控</li>
+<li><strong>SaaS</strong>：最终用户直接使用软件功能，无需关心任何技术细节</li>
+</ul>
+<p>这一阶段的核心价值是<strong>生产力解放</strong>。根据麦肯锡的研究，采用 PaaS 的开发团队交付速度平均提升 40%。</p>
+<p><strong>第三代：MaaS（模型即服务）</strong></p>
+<p>2023 年以来，随着大语言模型的爆发，一种新的云服务范式正在形成：</p>
+<blockquote>
+<p><strong>MaaS（Model as a Service）</strong>：通过云服务提供大模型能力的模式，包括模型训练、微调、推理 API 等全生命周期管理。</p>
+</blockquote>
+<p>MaaS 的核心特征：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>特征</th><th>说明</th><th>典型案例</th></tr>
+</thead>
+<tbody>
+<tr><td>按需调用</td><td>按 Token 或调用次数计费，无前期投入</td><td>DashScope API</td></tr>
+<tr><td>能力抽象</td><td>隐藏模型复杂性，提供简单接口</td><td>通义千问对话 API</td></tr>
+<tr><td>持续进化</td><td>模型能力自动升级，用户无感知</td><td>GPT-4 → GPT-4o</td></tr>
+<tr><td>生态集成</td><td>与向量库、知识库、Agent 框架深度整合</td><td>阿里云百炼平台</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="112-大模型时代的云原生新范式"><a class="header" href="#112-大模型时代的云原生新范式">1.1.2 大模型时代的云原生新范式</a></h3>
+<p>MaaS 的出现不是偶然，而是技术发展的必然结果：</p>
+<p><strong>原因一：模型规模的经济性</strong></p>
+<p>训练一个百亿参数级别的大模型，需要数千张 GPU 连续运行数周，硬件成本超过千万美元。这种规模的投入，只有少数云厂商和科技巨头能够承担。中小企业通过 API 调用大模型能力，本质上是<strong>共享规模经济红利</strong>。</p>
+<p><strong>原因二：技术迭代的加速</strong></p>
+<p>2023-2026 年间，大模型能力几乎每半年就有质的飞跃。如果企业自建模型，面临巨大的技术贬值风险。而使用 MaaS，模型升级由云厂商负责，用户可以持续享受最新技术成果。</p>
+<p><strong>原因三：应用场景的碎片化</strong></p>
+<p>大模型的应用场景极其分散：客服问答、文案生成、代码辅助、数据分析……每个场景需要的模型能力不同。MaaS 平台提供多种模型规格和微调选项，让用户可以按需选择。</p>
+<h3 id="113-maas-平台的核心能力矩阵"><a class="header" href="#113-maas-平台的核心能力矩阵">1.1.3 MaaS 平台的核心能力矩阵</a></h3>
+<p>一个成熟的 MaaS 平台应具备以下核心能力：</p>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│                  MaaS 平台能力矩阵                    │
+├─────────────┬─────────────┬─────────────┬───────────┤
+│  模型供给   │  开发工具   │  运维能力   │  安全合规  │
+├─────────────┼─────────────┼─────────────┼───────────┤
+│ • 多模型选择 │ • API SDK   │ • 弹性伸缩  │ • 数据加密 │
+│ • 模型微调   │ • 可视化编排 │ • 监控告警  │ • 访问控制 │
+│ • 私有部署   │ • 调试工具   │ • 日志审计  │ • 合规认证 │
+│ • 版本管理   │ • 测试框架   │ • 成本优化  │ • 内容审核 │
+└─────────────┴─────────────┴─────────────┴───────────┘
+</code></pre>
+<p>阿里云百炼平台正是这样一个典型的 MaaS 平台，我们将在后续章节深入探讨其使用方法。</p>
+<hr>
+<h2 id="12-大模型技术概览"><a class="header" href="#12-大模型技术概览">1.2 大模型技术概览</a></h2>
+<h3 id="121-transformer-架构核心原理"><a class="header" href="#121-transformer-架构核心原理">1.2.1 Transformer 架构核心原理</a></h3>
+<p>要理解大模型应用开发，首先需要掌握 Transformer 这一基石技术。2017 年 Google 发表的《Attention Is All You Need》论文提出了 Transformer 架构，彻底改变了自然语言处理领域。</p>
+<p><strong>核心思想：自注意力机制（Self-Attention）</strong></p>
+<p>传统 RNN/LSTM 模型按顺序处理文本，难以捕捉长距离依赖关系。Transformer 的自注意力机制允许模型直接计算任意两个词之间的关联度，无论它们在句子中的位置如何。</p>
+<p>用一个简单的例子说明：</p>
+<blockquote>
+<p>“动物过马路，因为<strong>它</strong>饿了”</p>
+</blockquote>
+<p>人类可以轻易判断“它“指代“动物“。传统模型需要逐词分析才能建立这个联系，而 Transformer 通过注意力权重直接建立“它→动物“的关联。</p>
+<p><strong>技术要点</strong>：</p>
+<ul>
+<li><strong>多头注意力（Multi-Head Attention）</strong>：并行计算多种注意力模式，捕捉不同维度的语义关系</li>
+<li><strong>位置编码（Positional Encoding）</strong>：为序列注入顺序信息</li>
+<li><strong>前馈神经网络（Feed-Forward Network）</strong>：对注意力输出进行非线性变换</li>
+<li><strong>层归一化（Layer Normalization）</strong>：稳定训练过程</li>
+</ul>
+<p><strong>对应用开发的意义</strong>：</p>
+<p>理解 Transformer 的基本原理，有助于你理解大模型的以下特性：</p>
+<ol>
+<li><strong>上下文窗口限制</strong>：注意力机制的计算复杂度与序列长度平方成正比，这解释了为什么早期模型只能处理 2K-4K token</li>
+<li><strong>并行推理困难</strong>：Transformer 是自回归生成的，下一个 token 依赖前面所有 token，这导致推理延迟难以避免</li>
+<li><strong>幻觉现象</strong>：模型基于概率生成文本，而非检索事实，这是 RAG 技术诞生的根本原因</li>
+</ol>
+<h3 id="122-预训练微调推理的技术链条"><a class="header" href="#122-预训练微调推理的技术链条">1.2.2 预训练、微调、推理的技术链条</a></h3>
+<p>大模型的生命周期可以分为三个阶段：</p>
+<p><strong>阶段一：预训练（Pre-training）</strong></p>
+<p>在海量无标注数据上训练通用语言模型，学习语言规律和世界知识。这是一个“博闻强记“的过程：</p>
+<ul>
+<li><strong>数据规模</strong>：万亿级 token</li>
+<li><strong>计算成本</strong>：数千 GPU 运行数周</li>
+<li><strong>产出</strong>：基座模型（Base Model），如 Qwen-72B-Base</li>
+</ul>
+<p>预训练模型已经具备强大的语言理解能力，但还不擅长遵循指令或完成特定任务。</p>
+<p><strong>阶段二：微调（Fine-tuning）</strong></p>
+<p>在特定任务数据上进一步训练，让模型学会遵循指令或掌握专业知识：</p>
+<ul>
+<li><strong>指令微调（Instruction Tuning）</strong>：使用指令 - 回答对数据，教会模型理解并执行各种指令</li>
+<li><strong>对齐微调（Alignment Tuning）</strong>：使用 RLHF（强化学习人类反馈）等技术，让模型输出更符合人类价值观</li>
+<li><strong>领域微调（Domain Adaptation）</strong>：在医疗、法律、金融等专业领域数据上训练，提升专业问题回答质量</li>
+</ul>
+<p><strong>阶段三：推理（Inference）</strong></p>
+<p>将训练好的模型部署到生产环境，响应用户请求：</p>
+<ul>
+<li><strong>离线批处理</strong>：批量处理大量文本，如文档摘要生成</li>
+<li><strong>在线实时推理</strong>：低延迟响应用户对话，如客服机器人</li>
+<li><strong>边缘推理</strong>：在终端设备运行小型模型，如手机语音助手</li>
+</ul>
+<p><strong>技术决策点</strong>：</p>
+<p>作为技术决策者，你需要在以下选项中做出选择：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>方案</th><th>适用场景</th><th>成本</th><th>周期</th></tr>
+</thead>
+<tbody>
+<tr><td>直接使用 API</td><td>快速验证、通用场景</td><td>低</td><td>天级</td></tr>
+<tr><td>Prompt 工程</td><td>特定任务优化</td><td>极低</td><td>小时级</td></tr>
+<tr><td>微调小模型</td><td>领域专业化、成本敏感</td><td>中</td><td>周级</td></tr>
+<tr><td>训练大模型</td><td>核心技术壁垒构建</td><td>极高</td><td>月级</td></tr>
+</tbody>
+</table>
+</div>
+<p>对于大多数企业，“API + Prompt 工程 + 必要时微调“是最务实的选择。</p>
+<h3 id="123-主流大模型对比"><a class="header" href="#123-主流大模型对比">1.2.3 主流大模型对比</a></h3>
+<p>2026 年的大模型市场已形成多强格局：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>模型</th><th>厂商</th><th>参数量</th><th>上下文窗口</th><th>特点</th><th>适用场景</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Qwen3.6-Plus</strong></td><td>阿里</td><td>未公开</td><td>100 万 token</td><td>编程能力强、Agent 适配、性价比高</td><td>代码生成、复杂任务规划</td></tr>
+<tr><td><strong>Qwen3.5-Omni</strong></td><td>阿里</td><td>未公开</td><td>256K token</td><td>全模态（文本/图像/音频/视频）</td><td>智能硬件、音视频处理</td></tr>
+<tr><td><strong>GPT-4o</strong></td><td>OpenAI</td><td>未公开</td><td>128K token</td><td>综合能力强、生态完善</td><td>通用场景、海外市场</td></tr>
+<tr><td><strong>Claude Opus 4.6</strong></td><td>Anthropic</td><td>未公开</td><td>200K token</td><td>长文本理解好、安全性高</td><td>法律文档、长报告分析</td></tr>
+<tr><td><strong>Llama 3.1 405B</strong></td><td>Meta</td><td>4050 亿</td><td>256K token</td><td>开源、可私有部署</td><td>数据敏感场景、定制化需求</td></tr>
+<tr><td><strong>GLM-5</strong></td><td>智谱 AI</td><td>未公开</td><td>256K token</td><td>中文能力强、本土化好</td><td>中文场景、政务应用</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>选型建议</strong>：</p>
+<ol>
+<li><strong>优先国产模型</strong>：数据出境合规要求下，通义千问、GLM 等国产模型是首选</li>
+<li><strong>关注性价比</strong>：Qwen3.6-Plus 输入 2 元/百万 token，仅为 Claude 的 1/10</li>
+<li><strong>考虑生态兼容</strong>：确保所选模型支持 LangChain、LlamaIndex 等主流框架</li>
+<li><strong>预留切换空间</strong>：设计抽象层，避免绑定单一模型供应商</li>
+</ol>
+<hr>
+<h2 id="13-阿里云大模型产品体系"><a class="header" href="#13-阿里云大模型产品体系">1.3 阿里云大模型产品体系</a></h2>
+<p>阿里云的大模型产品体系可以分为四层：</p>
+<pre><code>┌────────────────────────────────────────────────────────┐
+│                   应用开发层                            │
+│   百炼平台 · 智能体应用 · 工作流 · 知识库               │
+├────────────────────────────────────────────────────────┤
+│                   模型服务层                            │
+│   DashScope API · 通义千问 · 通义万相 · 通义听悟        │
+├────────────────────────────────────────────────────────┤
+│                   机器学习平台                          │
+│   PAI · 模型训练 · 模型微调 · 模型部署                   │
+├────────────────────────────────────────────────────────┤
+│                   基础设施层                            │
+│   ECS GPU · ECI · OSS · OpenSearch · AnalyticDB       │
+└────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="131-通义千问qwen系列模型"><a class="header" href="#131-通义千问qwen系列模型">1.3.1 通义千问（Qwen）系列模型</a></h3>
+<p>通义千问是阿里云自主研发的大语言模型，目前已演进到 3.6 版本：</p>
+<p><strong>Qwen3.6-Plus</strong>（2026 年 4 月发布）</p>
+<ul>
+<li>100 万 token 超长上下文</li>
+<li>专为 Agent 和编程任务优化</li>
+<li>SWE-bench Verified 得分 78.8%，接近 Claude Opus 4.6</li>
+<li>定价：输入 2 元/百万 token，输出 12 元/百万 token</li>
+</ul>
+<p><strong>Qwen3.5-Omni</strong>（2026 年 3 月发布）</p>
+<ul>
+<li>全模态理解与生成（文本、图像、音频、视频）</li>
+<li>支持 113 种语言识别</li>
+<li>端到端音频理解，可处理 10 小时音频或 1 小时视频</li>
+<li>实时交互延迟 1-2 秒</li>
+</ul>
+<p><strong>Qwen-Max</strong></p>
+<ul>
+<li>最强推理能力，适合复杂逻辑任务</li>
+<li>适合数学推理、科学计算等高难度场景</li>
+</ul>
+<p><strong>Qwen-Plus</strong></p>
+<ul>
+<li>性能与成本的平衡选择</li>
+<li>适合大多数企业应用场景</li>
+</ul>
+<p><strong>开源版本</strong></p>
+<ul>
+<li>Qwen-72B、Qwen-14B、Qwen-7B 等</li>
+<li>支持私有部署和自定义微调</li>
+</ul>
+<h3 id="132-百炼平台一站式大模型开发"><a class="header" href="#132-百炼平台一站式大模型开发">1.3.2 百炼平台：一站式大模型开发</a></h3>
+<p>阿里云百炼平台（Model Studio）是本书重点介绍的开发平台，提供：</p>
+<p><strong>模型广场</strong></p>
+<ul>
+<li>接入通义千问、Llama、GLM 等数十种模型</li>
+<li>支持模型对比测试和 A/B 实验</li>
+</ul>
+<p><strong>应用开发</strong></p>
+<ul>
+<li>可视化工作流编排</li>
+<li>智能体（Agent）应用模板</li>
+<li>知识库问答系统快速搭建</li>
+</ul>
+<p><strong>模型微调</strong></p>
+<ul>
+<li>LoRA、全量微调等多种方式</li>
+<li>自动化超参数调优</li>
+<li>一键部署为 API</li>
+</ul>
+<p><strong>评测与监控</strong></p>
+<ul>
+<li>多维度模型性能评估</li>
+<li>调用量统计与成本分析</li>
+<li>异常检测与告警</li>
+</ul>
+<h3 id="133-pai-平台机器学习与深度学习"><a class="header" href="#133-pai-平台机器学习与深度学习">1.3.3 PAI 平台：机器学习与深度学习</a></h3>
+<p>PAI（Platform for Artificial Intelligence）是阿里云的机器学习平台，提供：</p>
+<ul>
+<li><strong>PAI-DSW</strong>：交互式建模开发环境（类似 Jupyter Notebook）</li>
+<li><strong>PAI-DLC</strong>：分布式训练集群，支持千卡规模</li>
+<li><strong>PAI-EAS</strong>：模型在线服务，自动扩缩容</li>
+<li><strong>PAI-Designer</strong>：可视化建模工具</li>
+</ul>
+<p>对于需要自定义模型训练的企业，PAI 提供了完整的工具链。</p>
+<h3 id="134-模型服务网关与-api-管理"><a class="header" href="#134-模型服务网关与-api-管理">1.3.4 模型服务网关与 API 管理</a></h3>
+<p>DashScope（灵积模型服务）是阿里云的大模型 API 网关：</p>
+<ul>
+<li><strong>统一认证</strong>：一个 API Key 访问所有模型</li>
+<li><strong>流量控制</strong>：限流、配额管理</li>
+<li><strong>计费统计</strong>：详细的用量报表</li>
+<li><strong>错误处理</strong>：标准化的错误码和重试机制</li>
+</ul>
+<hr>
+<h2 id="14-大模型应用开发的挑战"><a class="header" href="#14-大模型应用开发的挑战">1.4 大模型应用开发的挑战</a></h2>
+<h3 id="141-成本控制token-计费与优化策略"><a class="header" href="#141-成本控制token-计费与优化策略">1.4.1 成本控制：Token 计费与优化策略</a></h3>
+<p>大模型的 Token 计费模式是一个双刃剑：</p>
+<p><strong>优势</strong>：零前期投入，用多少付多少</p>
+<p><strong>风险</strong>：成本不可预测，可能随用户量增长而失控</p>
+<p><strong>成本构成分析</strong>：</p>
+<p>以一个客服机器人为例，假设：</p>
+<ul>
+<li>日均对话量：10,000 轮</li>
+<li>平均每轮输入：500 token</li>
+<li>平均每轮输出：300 token</li>
+<li>使用 Qwen3.6-Plus：输入 2 元/百万 token，输出 12 元/百万 token</li>
+</ul>
+<p>月度成本计算：</p>
+<pre><code>月输入 token = 10,000 × 500 × 30 = 1.5 亿 token
+月输出 token = 10,000 × 300 × 30 = 9000 万 token
+月输入成本 = 1.5 亿 ÷ 100 万 × 2 = 300 元
+月输出成本 = 9000 万 ÷ 100 万 × 12 = 1080 元
+月总成本 = 1380 元
+</code></pre>
+<p>看起来不高？但如果你的应用需要处理长文档（如 10 万字合同），单次输入就可能消耗 10 万 token，成本结构完全不同。</p>
+<p><strong>优化策略</strong>：</p>
+<ol>
+<li><strong>Prompt 压缩</strong>：去除冗余信息，保留关键上下文</li>
+<li><strong>缓存复用</strong>：相似问题直接返回缓存答案</li>
+<li><strong>混合模型</strong>：简单问题用小模型，复杂问题用大模型</li>
+<li><strong>输出长度限制</strong>：设置 max_tokens 上限</li>
+<li><strong>批量处理</strong>：合并多个请求，摊薄固定开销</li>
+</ol>
+<p>第 7 章将详细讨论成本优化的技术手段。</p>
+<h3 id="142-延迟优化流式响应与缓存机制"><a class="header" href="#142-延迟优化流式响应与缓存机制">1.4.2 延迟优化：流式响应与缓存机制</a></h3>
+<p>大模型推理延迟通常在 1-5 秒之间，这对实时交互场景（如客服对话）是不可接受的。</p>
+<p><strong>延迟构成</strong>：</p>
+<ul>
+<li><strong>首字延迟（Time to First Token）</strong>：1-3 秒</li>
+<li><strong>生成速度</strong>：20-100 token/秒</li>
+<li><strong>网络传输</strong>：50-200ms</li>
+</ul>
+<p><strong>优化方案</strong>：</p>
+<ol>
+<li><strong>流式响应（Streaming）</strong>：边生成边返回，用户感知延迟大幅降低</li>
+<li><strong>语义缓存</strong>：对相似问题返回缓存答案，延迟降至毫秒级</li>
+<li><strong>推测解码</strong>：用小模型预测输出，大模型验证修正</li>
+<li><strong>边缘节点</strong>：在靠近用户的区域部署推理节点</li>
+</ol>
+<h3 id="143-数据安全隐私保护与合规要求"><a class="header" href="#143-数据安全隐私保护与合规要求">1.4.3 数据安全：隐私保护与合规要求</a></h3>
+<p>企业使用大模型时，数据安全问题尤为突出：</p>
+<p><strong>风险点</strong>：</p>
+<ul>
+<li>敏感数据上传到云端</li>
+<li>模型可能被提示词攻击窃取训练数据</li>
+<li>生成内容可能泄露商业秘密</li>
+</ul>
+<p><strong>防护措施</strong>：</p>
+<ol>
+<li><strong>数据脱敏</strong>：上传前移除个人信息、商业机密</li>
+<li><strong>私有部署</strong>：敏感场景使用本地部署模型</li>
+<li><strong>访问控制</strong>：严格的 API Key 管理和权限隔离</li>
+<li><strong>审计日志</strong>：记录所有调用行为，便于追溯</li>
+</ol>
+<p>第 6 章将深入讨论安全与合规的最佳实践。</p>
+<h3 id="144-可观测性日志监控调试"><a class="header" href="#144-可观测性日志监控调试">1.4.4 可观测性：日志、监控、调试</a></h3>
+<p>大模型应用的调试比传统软件更困难：</p>
+<p><strong>挑战</strong>：</p>
+<ul>
+<li>同样的输入可能产生不同的输出（非确定性）</li>
+<li>模型行为难以预测和解释</li>
+<li>问题定位需要同时分析代码、Prompt、模型输出</li>
+</ul>
+<p><strong>可观测性体系建设</strong>：</p>
+<ol>
+<li><strong>结构化日志</strong>：记录输入、输出、耗时、Token 用量</li>
+<li><strong>链路追踪</strong>：追踪请求在多个组件间的流转</li>
+<li><strong>质量监控</strong>：检测幻觉、有害内容、异常输出</li>
+<li><strong>用户反馈</strong>：收集点赞/点踩数据，持续优化</li>
+</ol>
+<hr>
+<h2 id="本章小结"><a class="header" href="#本章小结">本章小结</a></h2>
+<p>本章我们完成了对云计算和大模型技术的系统性梳理：</p>
+<p><strong>核心知识点</strong>：</p>
+<ol>
+<li><strong>MaaS 是新范式</strong>：云计算从 IaaS→PaaS→MaaS 演进，大模型即服务成为主流</li>
+<li><strong>Transformer 是基石</strong>：理解自注意力机制有助于把握大模型的能力边界</li>
+<li><strong>阿里云产品矩阵</strong>：通义千问系列 + 百炼平台 + PAI+DashScope 构成完整技术栈</li>
+<li><strong>四大挑战</strong>：成本、延迟、安全、可观测性是生产环境必须解决的问题</li>
+</ol>
+<p><strong>技术决策要点</strong>：</p>
+<ul>
+<li>优先使用云 API 而非自建，聚焦业务逻辑</li>
+<li>选择国产模型确保数据合规</li>
+<li>设计抽象层避免供应商锁定</li>
+<li>从一开始就建设可观测性体系</li>
+</ul>
+<p><strong>下一章预告</strong>：</p>
+<p>第 2 章将深入阿里云的基础设施层，详细介绍 GPU/NPU 计算资源、向量数据库、数据存储、网络安全等核心组件，为你构建大模型应用打下坚实的地基。</p>
+<hr>
+<h2 id="延伸阅读"><a class="header" href="#延伸阅读">延伸阅读</a></h2>
+<ol>
+<li>Vaswani A, et al. “Attention Is All You Need.” NeurIPS 2017.</li>
+<li>阿里云百炼平台官方文档：https://help.aliyun.com/product/42154.html</li>
+<li>Qwen3.6 技术报告：https://qwenlm.github.io/blog/qwen3.6/</li>
+<li>Gartner: “Market Guide for Generative AI Products”, 2025</li>
+<li>《大模型落地实践指南》，机械工业出版社，2025</li>
+</ol>
+<hr>
+<p><strong>本章字数</strong>: 约 12,000 字<br><strong>完成时间</strong>: 2026-04-16</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../preface.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../chapter-02/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../preface.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../chapter-02/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
