@@ -1,6 +1,6 @@
 [book]
-title = "云上大模型应用开发实践"
-authors = ["方华"]
+title = "云上智能：大模型应用开发实战"
+authors = ["llmlearning"]
 language = "zh"
 description = "以阿里云为主要平台，带领零基础读者从入门到实战，系统掌握云上大模型应用开发技能"
 src = "src"
