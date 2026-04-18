@@ -57,3 +57,4 @@
 - [附录 A：阿里云产品速查表](./appendix/appendix-a.md)
 - [附录 B：常用工具与资源](./appendix/appendix-b.md)
 - [附录 C：术语表](./appendix/appendix-c.md)
+- [附录 D：错误码速查与常见问题](./appendix/appendix-d.md)
