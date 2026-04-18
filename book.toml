@@ -10,7 +10,6 @@ build-dir = "book"
 
 [output.html]
 theme = "default"
-default-language = "zh"
 footer = true
 
 [output.html.print]
