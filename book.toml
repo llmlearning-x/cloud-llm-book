@@ -3,89 +3,26 @@ title = "云上大模型应用开发实践"
 authors = ["方华"]
 language = "zh"
 description = "以阿里云为主要平台，带领零基础读者从入门到实战，系统掌握云上大模型应用开发技能"
-multilingual = false
 src = "src"
-book_version = "1.0"
 
 [build]
 build-dir = "book"
-create-new-build-dir = true
-additional-css = []
-additional-js = []
-media-type = "text/html"
-default-hierarchy = "book"
 
 [output.html]
 theme = "default"
-no-section-label = false
 default-language = "zh"
-preferred-dark-theme = "navy"
-mathjax-support = false
-katex-support = true
-google-analytics = ""
-additional-css = []
-curly-quotes = false
-hardcoded-course-links-disabled = false
-print-media-type = false
-copy-fonts = false
-copy-button = true
-refresh-static = true
-lightbox = true
 footer = true
-copyright = "Copyright © 2026"
-favicon = "assets/images/favicon.png"
 
 [output.html.print]
 enable = true
 page-break = true
-title = "云上大模型应用开发实践"
-subtitle = ""
 
 [output.html.search]
-enable = true
-limit-results = 30
-progressive-reveal = false
-teaser = true
-
-[output.html.sidebar]
-enable = true
-search-bar-hidden = false
-
-[output.html.scroll]
 enable = true
 
 [output.html.table-of-contents]
 enable = true
-plain = false
-max-depth = 3
-minify = false
 
 [output.html.git-repository]
 enable = true
 url = "https://github.com/your-username/cloud-llm-book"
-icon = "fa-brands fa-github"
-
-[output.html.code]
-close-button = true
-copy-button = true
-wrap-code = true
-
-[output.html.code.copy-button]
-cursor = "pointer"
-tooltip-backdrop = "backdrop"
-tooltip-text = "复制到剪贴板"
-tooltip-text-success = "已复制"
-
-[preprocessor.mermaid]
-enable = true
-
-[postprocessor.mdbook-mermaid]
-enable = true
-
-[postprocessor.mdbook-hints]
-enable = true
-border-radius = "4px"
-color = "#f7f7f7"
-background-color = "#eaf4ff"
-border-left = "4px solid #186498"
-padding = "0.5em 1em"
