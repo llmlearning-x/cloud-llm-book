@@ -9,19 +9,4 @@ src = "src"
 build-dir = "book"
 
 [output.html]
-theme = "default"
-footer = true
-
-[output.html.print]
-enable = true
-page-break = true
-
-[output.html.search]
-enable = true
-
-[output.html.table-of-contents]
-enable = true
-
-[output.html.git-repository]
-enable = true
-url = "https://github.com/your-username/cloud-llm-book"
+search.enable = true
