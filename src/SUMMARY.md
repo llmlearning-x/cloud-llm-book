@@ -1,49 +1,58 @@
-# Summary
+# 目录
 
-- [前言](README.md)
-- [第一部分：基础入门](part-1/README.md)
-  - [第 1 章：AI 与云计算基础](part-1/chapter-01/README.md)
-  - [第 2 章：Python 基础与环境搭建](part-1/chapter-02/README.md)
-  - [第 3 章：大模型概述与阿里云产品全景](part-1/chapter-03/README.md)
-  - [第 4 章：DashScope API 快速入门](part-1/chapter-04/README.md)
-- [第二部分：Prompt 工程](part-2/README.md)
-  - [第 5 章：Prompt 工程基础](part-2/chapter-05/README.md)
-  - [第 6 章：结构化 Prompt 与模板](part-2/chapter-06/README.md)
-  - [第 7 章：高级 Prompt 技巧](part-2/chapter-07/README.md)
-  - [第 8 章：Prompt 工程实战](part-2/chapter-08/README.md)
-- [第三部分：应用开发实战](part-3/README.md)
-  - [第 9 章：快速构建 AI 对话应用](part-3/chapter-09/README.md)
-  - [第 10 章：企业知识库问答系统](part-3/chapter-10/README.md)
-  - [第 11 章：智能客服开发](part-3/chapter-11/README.md)
-  - [第 12 章：内容生成与创作助手](part-3/chapter-12/README.md)
-  - [第 13 章：代码助手开发](part-3/chapter-13/README.md)
-  - [第 14 章：数据分析与报告生成](part-3/chapter-14/README.md)
-  - [第 15 章：垂直领域大模型应用](part-3/chapter-15/README.md)
-- [第四部分：高级应用架构](part-4/README.md)
-  - [第 16 章：RAG 架构深度实践](part-4/chapter-16/README.md)
-  - [第 17 章：Agent 智能体开发](part-4/chapter-17/README.md)
-  - [第 18 章：多模态应用开发](part-4/chapter-18/README.md)
-  - [第 19 章：Function Calling 与工具集成](part-4/chapter-19/README.md)
-  - [第 20 章：向量数据库深度应用](part-4/chapter-20/README.md)
-- [第五部分：模型微调与训练](part-5/README.md)
-  - [第 21 章：模型微调理论](part-5/chapter-21/README.md)
-  - [第 22 章：阿里云 PAI 微调实战](part-5/chapter-22/README.md)
-  - [第 23 章：预训练数据处理](part-5/chapter-23/README.md)
-  - [第 24 章：模型部署与服务化](part-5/chapter-24/README.md)
-- [第六部分：云原生部署与运维](part-6/README.md)
-  - [第 25 章：云原生架构设计](part-6/chapter-25/README.md)
-  - [第 26 章：函数计算部署 AI 应用](part-6/chapter-26/README.md)
-  - [第 27 章：容器化部署实践](part-6/chapter-27/README.md)
-  - [第 28 章：弹性扩缩容与高可用](part-6/chapter-28/README.md)
-  - [第 29 章：安全与合规实践](part-6/chapter-29/README.md)
-- [第七部分：项目实战案例](part-7/README.md)
-  - [第 30 章：企业级知识库问答系统](part-7/chapter-30/README.md)
-  - [第 31 章：智能客服系统完整实现](part-7/chapter-31/README.md)
-  - [第 32 章：从 0 到 1 构建 AI 产品](part-7/chapter-32/README.md)
-- [第八部分：前沿与展望](part-8/README.md)
-  - [第 33 章：大模型发展趋势与未来展望](part-8/chapter-33/README.md)
-- [附录](appendix/README.md)
-  - [附录 A：阿里云产品速查表](appendix/a-products.md)
-  - [附录 B：常用工具与资源](appendix/b-tools.md)
-  - [附录 C：术语表（中英对照）](appendix/c-glossary.md)
-  - [附录 D：常见错误代码速查](appendix/d-errors.md)
+- [前言](./README.md)
+
+---
+
+## 第一部分：基础入门
+
+- [第 1 章：AI 与云计算基础](./part-1/chapter-01/README.md)
+- [第 2 章：Python 基础与环境搭建](./part-1/chapter-02/README.md)
+- [第 3 章：大模型概述与阿里云产品全景](./part-1/chapter-03/README.md)
+- [第 4 章：DashScope API 快速入门](./part-1/chapter-04/README.md)
+
+---
+
+## 第二部分：Prompt 工程
+
+- [第 5 章：Prompt 工程基础](./part-2/chapter-05/README.md)
+- [第 6 章：高级 Prompt 技巧](./part-2/chapter-06/README.md)
+
+---
+
+## 第三部分：应用开发实战
+
+- [第 7 章：快速构建 AI 对话应用](./part-3/chapter-07/README.md)
+- [第 8 章：企业知识库问答系统](./part-3/chapter-08/README.md)
+- [第 9 章：智能客服开发](./part-3/chapter-09/README.md)
+- [第 10 章：内容生成与创作助手](./part-3/chapter-10/README.md)
+- [第 11 章：垂直领域应用](./part-3/chapter-11/README.md)
+
+---
+
+## 第四部分：高级应用架构
+
+- [第 12 章：RAG 架构深度实践](./part-4/chapter-12/README.md)
+- [第 13 章：Agent 智能体开发](./part-4/chapter-13/README.md)
+- [第 14 章：Function Calling 与工具集成](./part-4/chapter-14/README.md)
+
+---
+
+## 第五部分：模型微调与部署
+
+- [第 15 章：阿里云 PAI 模型微调实战](./part-5/chapter-15/README.md)
+- [第 16 章：模型部署与服务化](./part-5/chapter-16/README.md)
+
+---
+
+## 第六部分：云原生与运维
+
+- [第 17 章：云原生部署与运维实践](./part-6/chapter-17/README.md)
+
+---
+
+## 附录
+
+- [附录 A：阿里云产品速查表](./appendix/appendix-a.md)
+- [附录 B：常用工具与资源](./appendix/appendix-b.md)
+- [附录 C：术语表](./appendix/appendix-c.md)
